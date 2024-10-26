@@ -39,5 +39,6 @@ router.use([() => import('@adonisjs/core/bodyparser_middleware'), () => import('
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  validateAgainst: () => import('#middleware/validate_against_middleware'),
   auth: () => import('#middleware/auth_middleware')
 })

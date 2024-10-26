@@ -9,8 +9,6 @@
 
 import router from '@adonisjs/core/services/router'
 
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
+const sandboxesController = () => import('#controllers/sandboxes_controller')
+
+router.get('/hello', [sandboxesController, 'hello'])
