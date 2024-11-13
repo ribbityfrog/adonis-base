@@ -9,6 +9,9 @@
 
 import router from '@adonisjs/core/services/router'
 
+router.get('/', () => 'Hello :)')
+router.get('/favicon.ico', () => 'Not a website ^^')
+
 const sandboxesController = () => import('#controllers/sandboxes_controller')
 
-router.get('/hello', [sandboxesController, 'hello'])
+router.get('/sand', [sandboxesController, 'sand'])

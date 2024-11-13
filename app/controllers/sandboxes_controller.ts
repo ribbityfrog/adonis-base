@@ -1,7 +1,7 @@
 // import type { HttpContext } from '@adonisjs/core/http'
 
 export default class SandboxesController {
-  async hello() {
-    return 'Hello :)'
+  async sand() {
+    return 'Enter the sandbox'
   }
 }

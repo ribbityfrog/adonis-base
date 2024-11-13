@@ -1,17 +1,21 @@
 {
   "name": "adonis-base",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node bin/server.js",
+    "start": "node build/bin/server.js",
     "build": "node ace build",
+    "install": "node ace build",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": "22.11.0"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
