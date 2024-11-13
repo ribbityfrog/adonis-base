@@ -3,12 +3,18 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import BreeInstance from 'bree'
 import logger from '@adonisjs/core/services/logger'
+import Except from '#utils/except'
 
 export default class Bree {
   private _instance: BreeInstance
+  private _ready: boolean = false
 
   get instance(): BreeInstance {
     return this._instance
+  }
+
+  get isReady(): boolean {
+    return this._ready
   }
 
   constructor() {
@@ -26,12 +32,14 @@ export default class Bree {
     })
   }
 
-  // prepare() {}
-
   async init() {
     await this._instance
       .start()
       .then(() => logger.info('[service] Bree has started properly'))
-      .catch((error) => logger.error(`[service] Bree has failed to start: ${error}`))
+      .catch((error) =>
+        Except.serviceUnavailable('intern', {
+          debug: { message: '[service] Bree - Failed to start', error },
+        })
+      )
   }
 }

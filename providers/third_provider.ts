@@ -26,10 +26,16 @@ export default class ThirdProvider {
    */
   async start() {
     const mailer = await this.app.container.make(Brevo)
-    mailer.init()
+    await mailer
+      .init()
+      .then()
+      .catch(() => {})
 
     const scheduler = await this.app.container.make(Bree)
-    await scheduler.init()
+    await scheduler
+      .init()
+      .then()
+      .catch(() => {})
   }
 
   /**

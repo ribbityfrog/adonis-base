@@ -27,5 +27,15 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PORT: Env.schema.number(),
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
-  DB_DATABASE: Env.schema.string()
+  DB_DATABASE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring mail service
+  |----------------------------------------------------------
+  */
+  BV_API_KEY: Env.schema.string(),
+  BV_SENDER_EMAIL_DEFAULT: Env.schema.string({ format: 'email' }),
+  BV_SENDER_NAME_DEFAULT: Env.schema.string(),
+  BV_RECEIVER_TEST: Env.schema.string({ format: 'email' }),
 })
