@@ -18,9 +18,7 @@ export default class ThirdProvider {
   /**
    * The container bindings have booted
    */
-  async boot() {
-    await this.app.container.make(Bree)
-  }
+  async boot() {}
 
   /**
    * The application has been booted
@@ -37,6 +35,9 @@ export default class ThirdProvider {
       .init()
       .then()
       .catch(() => {})
+
+    const storage = await this.app.container.make(Flydrive)
+    await storage.checkInit()
   }
 
   /**

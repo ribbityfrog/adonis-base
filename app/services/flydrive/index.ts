@@ -3,12 +3,27 @@ import { S3Driver } from 'flydrive/drivers/s3'
 import storageConfig from '#config/storage'
 import Except from '#utils/except'
 import { SignedURLOptions } from 'flydrive/types'
+import logger from '@adonisjs/core/services/logger'
 
 export default class Flydrive {
   private _disk: Disk
 
   constructor() {
     this._disk = new Disk(new S3Driver(storageConfig))
+  }
+
+  async checkInit() {
+    await this._disk
+      .exists('dummy')
+      .then(() => logger.info('[service] Flydrive - Started, account seems valid'))
+      .catch((error) =>
+        Except.serviceUnavailable('intern', {
+          debug: {
+            message: '[service] Flydrive - Most likely failed to validate configuration',
+            error,
+          },
+        })
+      )
   }
 
   async store(path: string, buffer: Buffer): Promise<boolean> {
@@ -108,7 +123,18 @@ export default class Flydrive {
   }
 
   async exists(path: string) {
-    return await this._disk.exists(path)
+    let doesExist = false
+
+    await this._disk
+      .exists(path)
+      .then(() => (doesExist = true))
+      .catch((error) =>
+        Except.serviceUnavailable('none', {
+          debug: { message: '[service] Flydrive - Failed to check if the item exists', error },
+        })
+      )
+
+    return doesExist
   }
 
   async delete(path: string): Promise<void> {

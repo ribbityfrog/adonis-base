@@ -4,6 +4,8 @@ import storage from '#services/storage'
 
 export default class SandboxesController {
   async sand() {
+    console.log(await storage.exists('placecat.png'))
+
     return 'done'
   }
 

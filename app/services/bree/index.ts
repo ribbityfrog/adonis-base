@@ -35,7 +35,7 @@ export default class Bree {
   async init() {
     await this._instance
       .start()
-      .then(() => logger.info('[service] Bree has started properly'))
+      .then(() => logger.info('[service] Bree - Started properly'))
       .catch((error) =>
         Except.serviceUnavailable('intern', {
           debug: { message: '[service] Bree - Failed to start', error },
