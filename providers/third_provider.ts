@@ -1,6 +1,7 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 import Brevo from '#services/brevo/index'
 import Bree from '#services/bree/index'
+import Flydrive from '#services/flydrive/index'
 
 export default class ThirdProvider {
   constructor(protected app: ApplicationService) {}
@@ -11,6 +12,7 @@ export default class ThirdProvider {
   register() {
     this.app.container.singleton(Brevo, () => new Brevo())
     this.app.container.singleton(Bree, () => new Bree())
+    this.app.container.singleton(Flydrive, () => new Flydrive())
   }
 
   /**
@@ -18,7 +20,6 @@ export default class ThirdProvider {
    */
   async boot() {
     await this.app.container.make(Bree)
-    // scheduler.prepare()
   }
 
   /**

@@ -34,9 +34,9 @@ export default class ProcessFile {
         ext: file.extname ?? '',
         type: file.type ?? '',
         subtype: file.subtype ?? '',
+        size: file.meta.buffer.totalSize,
       },
       path: file.filePath,
-      size: file.meta.buffer.totalSize,
       buffer: Buffer.concat(
         file.meta.buffer.parts.length > 0 ? file.meta.buffer.parts : [Buffer.from('')]
       ),

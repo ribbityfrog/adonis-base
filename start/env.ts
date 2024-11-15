@@ -38,4 +38,17 @@ export default await Env.create(new URL('../', import.meta.url), {
   BV_SENDER_EMAIL_DEFAULT: Env.schema.string({ format: 'email' }),
   BV_SENDER_NAME_DEFAULT: Env.schema.string(),
   BV_RECEIVER_TEST: Env.schema.string({ format: 'email' }),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring S3 storage service
+  |----------------------------------------------------------
+  */
+  S3_ACCESS_KEY_ID: Env.schema.string(),
+  S3_SECRET_ACCESS_KEY: Env.schema.string(),
+  S3_REGION: Env.schema.string(),
+  S3_BUCKET: Env.schema.string(),
+  S3_ENDPOINT: Env.schema.string(),
+  S3_ACL: Env.schema.boolean(),
+  S3_VISIBILITY: Env.schema.enum(['public', 'private'] as const),
 })
