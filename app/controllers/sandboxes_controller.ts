@@ -4,16 +4,15 @@ import storage from '#services/storage'
 
 export default class SandboxesController {
   async sand() {
-    console.log(await storage.retrieve('placecat.png'))
-
-    return 'Enter the sandbox'
+    return 'done'
   }
 
   async processFile({ request }: HttpContext) {
     const processedFiles = await ProcessFile.process(request)
 
-    const storedFile = await storage.store(processedFiles[0])
+    console.log(await storage.store(processedFiles[0].basics.name, processedFiles[0].buffer))
+    console.log(await storage.store(processedFiles[0].basics.name, processedFiles[0].buffer))
 
-    return storedFile
+    return 'done'
   }
 }

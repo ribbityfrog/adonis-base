@@ -1,10 +1,8 @@
 import { Disk } from 'flydrive'
 import { S3Driver } from 'flydrive/drivers/s3'
 import storageConfig from '#config/storage'
-import type StoredFile from '#services/flydrive/types'
-import type { ProcessedFile } from '#utils/process_file/types'
-import { randomUUID, UUID } from 'node:crypto'
 import Except from '#utils/except'
+import { SignedURLOptions } from 'flydrive/types'
 
 export default class Flydrive {
   private _disk: Disk
@@ -13,67 +11,44 @@ export default class Flydrive {
     this._disk = new Disk(new S3Driver(storageConfig))
   }
 
-  async store(file: ProcessedFile): Promise<StoredFile | null> {
-    const storedFile = {
-      uuid: randomUUID(),
-      basics: file.basics,
+  async store(path: string, buffer: Buffer): Promise<boolean> {
+    if ((await this.exists(path)) === true) {
+      Except.conflict('none', { debug: { message: '[service] Flydrive - File already exists' } })
+      return false
     }
 
-    const isPut = await this.put(file.basics.name, file.buffer)
-
-    if (isPut === false) return null
-
-    return storedFile
+    return await this.put(path, buffer)
   }
 
-  // async storeArray(files: ProcessedFile[]): Promise<[StoredFile[], ProcessedFile[]]> {
-  //   const storedFiles: StoredFile[] = []
-  //   const failedFiles: ProcessedFile[] = []
+  async retrieve(path: string): Promise<Buffer> {
+    if ((await this.exists(path)) === false) {
+      Except.conflict('none', { debug: { message: "[service] Flydrive - File doesn't exists" } })
+      return Buffer.from('')
+    }
 
-  //   for (const file of files) {
-  //     const tryStore = await this.store(file)
-
-  //     if (tryStore === null) failedFiles.push(file)
-  //     else storedFiles.push(tryStore)
-  //   }
-
-  //   return [storedFiles, failedFiles]
-  // }
-
-  // async retrieve(file: StoredFile): Promise<string | null> {
-  //   // const fileId = typeof file === 'string' ? file : file.uuid
-
-  //   return this.getSignedUrl(file.basics.name)
-  // }
-  async retrieve(file: string): Promise<string | null> {
-    // const fileId = typeof file === 'string' ? file : file.uuid
-
-    return this.getSignedUrl(file)
+    return this.get(path)
   }
 
-  // async retrieveArray(
-  //   files: StoredFile[] | UUID[],
-  //   inquiryId: UUID,
-  //   isSample: boolean
-  // ): Promise<[string[], StoredFile[] | UUID[]]> {
-  //   const paths: string[] = []
-  //   const failedFiles: StoredFile[] = []
-  //   const failedFilesByUUID: UUID[] = []
+  async retrieveUrl(path: string): Promise<string> {
+    if ((await this.exists(path)) === false) {
+      Except.conflict('none', { debug: { message: "[service] Flydrive - File doesn't exist" } })
+      return ''
+    }
 
-  //   const isUuid = typeof files[0] === 'string'
+    return this.getUrl(path)
+  }
 
-  //   for (const file of files) {
-  //     const path = await this.retrieve(file, inquiryId, isSample)
+  async retrieveSignedUrl(
+    path: string,
+    options: SignedURLOptions = { expiresIn: '2mins' }
+  ): Promise<string> {
+    if ((await this.exists(path)) === false) {
+      Except.conflict('none', { debug: { message: "[service] Flydrive - File doesn't exist" } })
+      return ''
+    }
 
-  //     if (path !== null) paths.push(path)
-  //     else {
-  //       if (typeof file === 'string') failedFilesByUUID.push(file)
-  //       else failedFiles.push(file)
-  //     }
-  //   }
-
-  //   return [paths, isUuid ? failedFilesByUUID : failedFiles]
-  // }
+    return this.getSignedUrl(path, options)
+  }
 
   async put(filename: string, content: string | Uint8Array): Promise<boolean> {
     let isPut = false
@@ -90,49 +65,60 @@ export default class Flydrive {
     return isPut
   }
 
-  // async getString(filename: string): Promise<string> {
-  //     return this._disk.get(filename);
-  // }
-
-  // async getInt8ArrayBuffer(filename: string): Promise<Uint8Array> {
-  //   return new Uint8Array(await this._disk.getArrayBuffer(filename))
-  // }
-
-  // async getArrayBuffer(filename: string): Promise<ArrayBuffer> {
-  //   return await this._disk.getArrayBuffer(filename)
-  // }
-
-  // async getBuffer(filename: string): Promise<Buffer> {
-  //   return Buffer.from(await this._disk.getArrayBuffer(filename))
-  // }
-
-  // async getUrl(filename: string): Promise<string> {
-  //     return this._disk.getUrl(filename);
-  // }
-
-  async getSignedUrl(filename: string): Promise<string | null> {
-    let signedUrl: string | null = null
+  async get(path: string): Promise<Buffer> {
+    let isGot = false
 
     await this._disk
-      .getSignedUrl(filename, {
-        expiresIn: '2mins',
-        // contentType: 'image/jpg',
-        // contentDisposition: 'attachment',
+      .get(path)
+      .then(() => (isGot = true))
+      .catch((error) => {
+        Except.serviceUnavailable('none', {
+          debug: { message: '[service] Flydrive - Failed to get item', error },
+        })
       })
-      .then((path) => (signedUrl = path))
-      .catch((_) => {})
+
+    if (isGot === false) return Buffer.from('')
+
+    return Buffer.from(await this._disk.getBytes(path))
+  }
+
+  async getUrl(path: string): Promise<string> {
+    let unsignedUrl: string = ''
+
+    await this._disk
+      .getUrl(path)
+      .then((url) => (unsignedUrl = url))
+      .catch(() => {})
+
+    return unsignedUrl
+  }
+
+  async getSignedUrl(
+    path: string,
+    options: SignedURLOptions = { expiresIn: '2mins' }
+  ): Promise<string> {
+    let signedUrl: string = ''
+
+    await this._disk
+      .getSignedUrl(path, options)
+      .then((url) => (signedUrl = url))
+      .catch(() => {})
 
     return signedUrl
   }
 
-  async delete(file: StoredFile): Promise<boolean> {
-    let tryDelete = false
+  async exists(path: string) {
+    return await this._disk.exists(path)
+  }
 
-    // await this._disk
-    //   .delete(this.buildPath(inquiryId, isSample, file))
-    //   .then((_) => (tryDelete = true))
-    //   .catch((_) => {})
-
-    return tryDelete
+  async delete(path: string): Promise<void> {
+    await this._disk
+      .delete(path)
+      .then()
+      .catch((error) =>
+        Except.serviceUnavailable('none', {
+          debug: { message: '[service] Flydrive - Failed to delete item', error },
+        })
+      )
   }
 }
