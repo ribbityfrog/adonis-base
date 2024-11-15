@@ -52,7 +52,7 @@ export default class Brevo {
         logger.info(`[service] Brevo - Account reached, company: ${resp.body?.companyName}`)
       )
       .catch((error) =>
-        Except.serviceUnavailable('intern', {
+        Except.serviceUnavailable('none', {
           debug: {
             message:
               '[service] Brevo - AccountApi cannot be reached, assuming TransactionalApi either if apiKey error',

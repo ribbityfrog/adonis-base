@@ -37,7 +37,7 @@ export default class Bree {
       .start()
       .then(() => logger.info('[service] Bree - Started properly'))
       .catch((error) =>
-        Except.serviceUnavailable('intern', {
+        Except.serviceUnavailable('none', {
           debug: { message: '[service] Bree - Failed to start', error },
         })
       )

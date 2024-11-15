@@ -17,7 +17,7 @@ export default class Flydrive {
       .exists('dummy')
       .then(() => logger.info('[service] Flydrive - Started, account seems valid'))
       .catch((error) =>
-        Except.serviceUnavailable('intern', {
+        Except.serviceUnavailable('none', {
           debug: {
             message: '[service] Flydrive - Most likely failed to validate configuration',
             error,
