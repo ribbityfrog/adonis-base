@@ -1,9 +1,11 @@
 // import hash from '@adonisjs/core/services/hash'
-// import { compose } from '@adonisjs/core/helpers'
-import DefaultModel from '#models/base/default'
-import { column } from '@adonisjs/lucid/orm'
+import { compose } from '@adonisjs/core/helpers'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 // import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { AccessToken, DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import { DateTime } from 'luxon'
+
+import withDefaultFields from '#models/mixins/default_fields'
 
 // const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 //   uids: ['email'],
@@ -11,7 +13,7 @@ import { AccessToken, DbAccessTokensProvider } from '@adonisjs/auth/access_token
 // })
 
 // export default class User extends compose(DefaultModel, AuthFinder) {
-export default class User extends DefaultModel {
+export default class User extends compose(BaseModel, withDefaultFields) {
   static table = 'accounts.users'
   currentAccessToken?: AccessToken
 
@@ -22,7 +24,7 @@ export default class User extends DefaultModel {
   // declare password: string
 
   @column()
-  declare verified: boolean
+  declare lastConnection: DateTime
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '30 days',

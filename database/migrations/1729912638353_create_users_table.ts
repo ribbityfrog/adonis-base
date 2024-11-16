@@ -1,5 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import defaultTable from '#utils/migration/default'
+import { defaultFieldsMigration } from '#models/mixins/default_fields'
 
 export default class extends BaseSchema {
   protected accountsSchema = 'accounts'
@@ -10,15 +10,15 @@ export default class extends BaseSchema {
     this.schema.createSchema(this.accountsSchema)
 
     this.schema.withSchema(this.accountsSchema).createTable(this.usersTable, (table) => {
-      defaultTable(this, table)
+      defaultFieldsMigration(this, table)
 
       table.string('email', 254).notNullable().unique()
       // table.string('password').notNullable()
-      table.boolean('verified').defaultTo(false)
+      table.timestamp('last_connection')
     })
 
     this.schema.withSchema(this.accountsSchema).createTable(this.connectionsTable, (table) => {
-      defaultTable(this, table)
+      defaultFieldsMigration(this, table)
 
       table
         .uuid('tokenable_id')
