@@ -64,6 +64,7 @@
     "@aws-sdk/s3-request-presigner": "^3.691.0",
     "@getbrevo/brevo": "^2.2.0",
     "@vinejs/vine": "^2.1.0",
+    "argon2": "^0.41.1",
     "bree": "^9.2.4",
     "flydrive": "^1.1.0",
     "luxon": "^3.5.0",
