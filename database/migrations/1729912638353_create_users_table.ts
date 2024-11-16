@@ -1,10 +1,13 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 import { defaultFieldsMigration } from '#models/mixins/default_fields'
 
+import { operationTypes } from '#models/accounts/types'
+
 export default class extends BaseSchema {
   protected accountsSchema = 'accounts'
   protected usersTable = 'users'
   protected connectionsTable = 'connections'
+  protected operationsTable = 'operations'
 
   async up() {
     this.schema.createSchema(this.accountsSchema)
@@ -34,9 +37,25 @@ export default class extends BaseSchema {
       table.timestamp('last_used_at').nullable()
       table.timestamp('expires_at').nullable()
     })
+
+    this.schema.withSchema(this.accountsSchema).createTable(this.operationsTable, (table) => {
+      defaultFieldsMigration(this, table)
+
+      table
+        .uuid('user_id')
+        .notNullable()
+        .references('id')
+        .inTable(`${this.accountsSchema}.${this.usersTable}`)
+        .onDelete('CASCADE')
+
+      table.enum('operation', operationTypes).notNullable()
+      table.string('search_key').notNullable()
+      table.string('verification_key').notNullable()
+    })
   }
 
   async down() {
+    this.schema.withSchema(this.accountsSchema).dropTable(this.operationsTable)
     this.schema.withSchema(this.accountsSchema).dropTable(this.connectionsTable)
     this.schema.withSchema(this.accountsSchema).dropTable(this.usersTable)
     this.schema.dropSchema(this.accountsSchema)

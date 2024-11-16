@@ -1,6 +1,24 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import { compose } from '@adonisjs/core/helpers'
 import withDefaultFields from '#models/mixins/default_fields'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
-export default class Operation extends compose(BaseModel, withDefaultFields) {}
+import type { OperationType } from '#models/accounts/types'
+
+import User from '#models/accounts/user'
+
+export default class Operation extends compose(BaseModel, withDefaultFields) {
+  static table = 'accounts.operations'
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
+
+  @column()
+  declare operation: OperationType
+
+  @column()
+  declare searchKey: string // cuid string
+
+  @column()
+  declare verificationKey: string // argon2 string
+}
