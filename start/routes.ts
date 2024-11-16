@@ -15,4 +15,21 @@ router.get('/favicon.ico', () => 'Not a website ^^')
 const sandboxesController = () => import('#controllers/sandboxes_controller')
 
 router.get('/sand', [sandboxesController, 'sand'])
-router.post('/processFile', [sandboxesController, 'processFile'])
+
+const usersController = () => import('#controllers/accounts/users_controller')
+const connectionsController = () => import('#controllers/accounts/connections_controller')
+
+// Users
+router
+  .group(() => {
+    router.get('list', [usersController, 'list'])
+    router.get('connections', [usersController, 'connections'])
+  })
+  .prefix('/users')
+
+// Connections
+router
+  .group(() => {
+    router.get('login', [connectionsController, 'login'])
+  })
+  .prefix('/connections')

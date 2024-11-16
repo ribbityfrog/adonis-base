@@ -26,5 +26,5 @@ export default withDefaultFields
 export function defaultFieldsMigration(that: BaseSchema, table: Knex.CreateTableBuilder) {
   table.uuid('id').primary().defaultTo(that.raw('gen_random_uuid()'))
   table.timestamp('created_at').notNullable()
-  table.timestamp('updated_at').nullable()
+  table.timestamp('updated_at').notNullable()
 }
