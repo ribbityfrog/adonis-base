@@ -6,10 +6,13 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import type { OperationType } from '#models/accounts/types'
 
 import User from '#models/accounts/user'
+import type { UUID } from 'node:crypto'
 
 export default class Operation extends compose(BaseModel, withDefaultFields) {
   static table = 'accounts.operations'
 
+  @column()
+  declare userId: UUID
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
