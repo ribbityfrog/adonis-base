@@ -5,6 +5,8 @@ import type { ZodType } from 'zod'
 
 export default class ValidateBodyMiddleware {
   async handle({ request }: HttpContext, next: NextFn, options: ZodType) {
+    if (request.hasBody() === false) Except.unprocessableEntity()
+
     const against = request.body()
 
     if (against === undefined) Except.unprocessableEntity()

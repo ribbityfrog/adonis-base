@@ -5,19 +5,19 @@ export default class extends BaseSeeder {
   async run() {
     await User.updateOrCreateMany('email', [
       {
-        email: 'a@a.a',
+        email: 'a@a.aa',
       },
       {
-        email: 'b@b.b',
+        email: 'b@b.bb',
       },
       {
-        email: 'c@c.c',
+        email: 'c@c.cc',
       },
       {
-        email: 'd@d.d',
+        email: 'd@d.dd',
       },
       {
-        email: 'e@e.e',
+        email: 'e@e.ee',
       },
     ])
   }

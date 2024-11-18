@@ -10,6 +10,7 @@ import { DateTime } from 'luxon'
 import withDefaultFields from '#models/mixins/default_fields'
 
 import Operation from '#models/accounts/operation'
+import { OperationType } from '#models/accounts/types'
 
 // const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 //   uids: ['email'],
@@ -40,4 +41,15 @@ export default class User extends compose(BaseModel, withDefaultFields) {
     type: 'auth_token',
     tokenSecretLength: 40,
   })
+
+  static async getWithOperations(email: string): Promise<User | null> {
+    return await User.query().preload('operations').where('email', email).first()
+  }
+
+  async clearOperations(operationType: OperationType): Promise<void> {
+    await Operation.query()
+      .where('user_id', this.id)
+      .andWhere('operation_type', operationType)
+      .delete()
+  }
 }

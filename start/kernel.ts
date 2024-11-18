@@ -42,6 +42,7 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
-  validateAgainst: () => import('#middleware/validate_against_middleware'),
+  validateBody: () => import('#middleware/validate_body_middleware'),
+  validateParams: () => import('#middleware/validate_params_middleware'),
   auth: () => import('#middleware/auth_middleware'),
 })

@@ -48,7 +48,7 @@ export default class extends BaseSchema {
         .inTable(`${this.accountsSchema}.${this.usersTable}`)
         .onDelete('CASCADE')
 
-      table.enum('operation', operationTypes).notNullable()
+      table.enum('operation_type', operationTypes).notNullable()
       table.string('search_key').notNullable()
       table.string('verification_key').notNullable()
     })

@@ -6,8 +6,4 @@ export default class UsersController {
   async list() {
     return await User.all()
   }
-
-  async connections() {
-    return await db.from('accounts.connections').select('*')
-  }
 }

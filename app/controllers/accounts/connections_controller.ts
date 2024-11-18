@@ -1,14 +1,7 @@
-// import type { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
-import User from '#models/accounts/user'
+import db from '@adonisjs/lucid/services/db'
 
 export default class ConnectionsController {
-  async login() {
-    const user = await User.first()
-
-    user!.lastConnection = DateTime.now()
-    await user?.save()
-
-    return await User.accessTokens.create(user!)
+  async list() {
+    return await db.from('accounts.connections').select('*')
   }
 }
