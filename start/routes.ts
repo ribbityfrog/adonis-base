@@ -26,24 +26,22 @@ const accountsOperationsController = () => import('#controllers/accounts/operati
 
 router
   .group(() => {
-    router
-      .group(() => {
-        router
-          .group(() => {
-            router.post('/login', [accountsOperationsController, 'requestLogin'])
-          })
-          .use(middleware.validateBody(userSchema.pick({ email: true })))
-          .prefix('request')
-        router
-          .group(() => {
-            router.post('/login', [accountsOperationsController, 'login'])
-          })
-          .use(middleware.validateBody(operationKeysSchema))
-      })
-      .prefix('operations')
+    router.group(() => {
+      router
+        .group(() => {
+          router.post('create', [accountsUsersController, 'create'])
+          router.post('login', [accountsOperationsController, 'requestLogin'])
+        })
+        .use(middleware.validateBody(userSchema.pick({ email: true })))
+        .prefix('request')
+      router
+        .group(() => {
+          router.post('login', [accountsOperationsController, 'login'])
+        })
+        .use(middleware.validateBody(operationKeysSchema))
+    })
   })
   .prefix('/accounts')
-// Operations with magic links
 
 // Admin
 router

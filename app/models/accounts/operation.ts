@@ -7,7 +7,10 @@ import type { OperationType } from '#models/accounts/types'
 
 import User from '#models/accounts/user'
 import type { UUID } from 'node:crypto'
+
 import string from '@adonisjs/core/helpers/string'
+import hash from '@adonisjs/core/services/hash'
+import { OperationKeys } from '#schemas/accounts/operation'
 
 export default class Operation extends compose(BaseModel, withDefaultFields) {
   static table = 'accounts.operations'
@@ -37,12 +40,30 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   static async createSearchKey(): Promise<string | undefined> {
     let searchKey
     for (let tryKey = 0; tryKey < 5; tryKey++) {
-      searchKey = string.random(8)
+      searchKey = string.random(12)
 
       if ((await Operation.findBy('searchKey', searchKey)) === null) break
 
       searchKey = undefined
     }
     return searchKey
+  }
+
+  static async createForUser(
+    user: User,
+    operationType: OperationType
+  ): Promise<OperationKeys | null> {
+    const searchKey = await Operation.createSearchKey()
+    if (searchKey === undefined) return null
+
+    const verificationKey = string.random(24)
+
+    await user.related('operations').create({
+      operationType,
+      searchKey,
+      verificationKey: await hash.make(verificationKey),
+    })
+
+    return { searchKey, verificationKey }
   }
 }

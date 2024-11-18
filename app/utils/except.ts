@@ -190,7 +190,7 @@ export default class Except {
   static forbidden(param1?: any, param2?: any): void {
     Except.custom(
       {
-        status: 401,
+        status: 403,
         code: 'FORBIDDEN',
         message: 'You are not authorized to access this resource',
       },
