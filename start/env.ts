@@ -17,7 +17,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring node and HTTP server
   |----------------------------------------------------------
   */
-  SCHEME: Env.schema.enum(['http', 'https'] as const),
   HOST: Env.schema.string({ format: 'host' }),
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
@@ -29,7 +28,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring magic links
   |----------------------------------------------------------
   */
-  MAGIC_ORIGIN: Env.schema.string(),
+  FRONT_ORIGIN: Env.schema.string(),
   MAGIC_CONNECT: Env.schema.string(),
 
   /*
