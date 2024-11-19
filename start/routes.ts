@@ -18,7 +18,7 @@ router.get('/favicon.ico', () => 'Not a website ^^')
 
 const sandboxesController = () => import('#controllers/sandboxes_controller')
 
-router.get('/sand', [sandboxesController, 'sand']).use(middleware.auth({ guards: ['api'] }))
+router.get('/sand', [sandboxesController, 'sand']) //.use(middleware.auth({ guards: ['api'] }))
 
 const accountsUsersController = () => import('#controllers/accounts/users_controller')
 const accountsConnectionsController = () => import('#controllers/accounts/connections_controller')

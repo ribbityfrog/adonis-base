@@ -19,7 +19,7 @@ export default class OperationsController {
     if (operationKeys === null)
       return Except.internalServerError('http', { debug: 'Failed to create connect operation' })
 
-    console.log(`Email: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
+    console.log(`PH_EMAIL Email: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
   }
 
   async login({ request }: HttpContext) {

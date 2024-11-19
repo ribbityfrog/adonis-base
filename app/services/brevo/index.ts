@@ -2,7 +2,9 @@
 import env from '#start/env'
 import Except from '#utils/except'
 import logger from '@adonisjs/core/services/logger'
-import brevoSdk, { TransactionalEmailsApi, AccountApi } from '@getbrevo/brevo'
+import brevoSdk, { TransactionalEmailsApi, AccountApi, SendSmtpEmail } from '@getbrevo/brevo'
+
+import savedTemplates from '#services/brevo/saved_templates'
 
 export default class Brevo {
   private _instance: any
@@ -63,18 +65,47 @@ export default class Brevo {
       )
   }
 
-  async sendTransacEmail(templateId: number, email: {} = {}) {
-    const transacEmail = { ...new this._instance.SendSmtpEmail(), ...email }
+  async sendTest() {
+    return await this.sendTransacEmail(savedTemplates.test, env.get('BV_RECEIVER_TEST'), {
+      PARAM: 'Params too',
+    })
+  }
 
-    transacEmail.sender = {
-      email: env.get('BV_SENDER_EMAIL_DEFAULT'),
-      name: env.get('BV_SENDER_NAME_DEFAULT'),
-    }
+  async sendCreateAccount(
+    to: string,
+    params: { MLINK: string },
+    options: SendSmtpEmail = {}
+  ): Promise<boolean> {
+    return await this.sendTransacEmail(savedTemplates.createAccount, to, params, options)
+  }
 
-    if (transacEmail.to === undefined) transacEmail.to = [{ email: env.get('BV_RECEIVER_TEST') }]
-
+  async sendTransacEmail(
+    templateId: number,
+    to: string,
+    params: Record<string, string> = {},
+    transacEmail: SendSmtpEmail = {}
+  ) {
     transacEmail.templateId = templateId
 
-    return this._Apitransactional.sendTransacEmail(transacEmail)
+    if (!transacEmail.to) transacEmail.to = [{ email: to }]
+    else transacEmail.to.unshift({ email: to })
+
+    transacEmail.params = params
+
+    if (!transacEmail.sender)
+      transacEmail.sender = {
+        email: env.get('BV_SENDER_EMAIL_DEFAULT'),
+        name: env.get('BV_SENDER_NAME_DEFAULT'),
+      }
+
+    let isSent = false
+    await this._Apitransactional
+      .sendTransacEmail(transacEmail)
+      .then(() => (isSent = true))
+      .catch((error) =>
+        Except.internalServerError('none', { debug: { message: "Couldn't send email", error } })
+      )
+
+    return isSent
   }
 }

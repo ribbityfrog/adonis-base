@@ -15,8 +15,11 @@ export default class UsersController {
     if (operationKeys === null) return Except.internalServerError()
 
     if (checkUser !== null)
-      console.log(`User exists: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
-    else console.log(`New user: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
+      console.log(
+        `PH_EMAIL User exists: ${user.email} - Link: ${magicLink('connect', operationKeys)}`
+      )
+    else
+      console.log(`PH_EMAIL New user: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
   }
 
   async list() {
