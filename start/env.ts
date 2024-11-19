@@ -22,6 +22,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   APP_KEY: Env.schema.string(),
   LOG_LEVEL: Env.schema.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']),
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
+  CORS: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
