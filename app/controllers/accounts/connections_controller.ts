@@ -24,10 +24,6 @@ export default class ConnectionsController {
       Except.entryNotFound()
       return
     }
-    // return await db
-    //   .from('accounts.connections')
-    //   .where('tokenable_id', auth.user.currentAccessToken.identifier)
-    //   .delete()
     return await User.accessTokens.delete(auth.user, auth.user.currentAccessToken.identifier)
   }
 }

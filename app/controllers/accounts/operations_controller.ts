@@ -39,7 +39,9 @@ export default class OperationsController {
       return Except.forbidden()
     }
 
-    const token = await User.accessTokens.create(operation.user)
+    const token = await User.accessTokens.create(operation.user, [
+      operation.user.isAdmin ? 'admin' : 'user',
+    ])
     operation.user.lastConnection = DateTime.now()
     await operation.user.save()
     await operation.delete()
