@@ -4,6 +4,6 @@
 
 export default class SandboxesController {
   async sand() {
-    return 'Hello async wolrd :)'
+    return 'Hello playroom world :)'
   }
 }

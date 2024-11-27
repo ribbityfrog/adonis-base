@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const operationKeysSchema = z
   .object({
-    searchKey: z.string(),
+    searchKey: z.string().cuid2(),
     verificationKey: z.string(),
   })
   .strict()

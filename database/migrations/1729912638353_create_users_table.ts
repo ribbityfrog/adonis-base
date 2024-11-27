@@ -17,6 +17,9 @@ export default class extends BaseSchema {
 
       table.string('email', 254).notNullable().unique()
       // table.string('password').notNullable()
+
+      table.boolean('is_admin').notNullable().defaultTo(false)
+
       table.timestamp('last_connection')
     })
 

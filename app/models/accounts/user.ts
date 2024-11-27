@@ -32,6 +32,9 @@ export default class User extends compose(BaseModel, withDefaultFields) {
   // declare password: string
 
   @column()
+  declare isAdmin: boolean
+
+  @column()
   declare lastConnection: DateTime
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {

@@ -12,6 +12,7 @@ export default class extends BaseSeeder {
       },
       {
         email: 'c@c.cc',
+        isAdmin: true,
       },
       {
         email: 'd@d.dd',

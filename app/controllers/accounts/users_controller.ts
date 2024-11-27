@@ -22,7 +22,15 @@ export default class UsersController {
       console.log(`PH_EMAIL New user: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
   }
 
+  async me({ auth }: HttpContext) {
+    return auth?.user
+  }
+
   async list() {
     return await User.all()
+  }
+
+  async deleteSelf({ auth }: HttpContext) {
+    return await auth.user?.delete()
   }
 }

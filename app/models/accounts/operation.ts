@@ -9,6 +9,7 @@ import User from '#models/accounts/user'
 import type { UUID } from 'node:crypto'
 
 import string from '@adonisjs/core/helpers/string'
+import { cuid } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
 import { OperationKeys } from '#schemas/accounts/operation'
 
@@ -40,7 +41,7 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   static async createSearchKey(): Promise<string | undefined> {
     let searchKey
     for (let tryKey = 0; tryKey < 5; tryKey++) {
-      searchKey = string.random(12)
+      searchKey = cuid()
 
       if ((await Operation.findBy('searchKey', searchKey)) === null) break
 
