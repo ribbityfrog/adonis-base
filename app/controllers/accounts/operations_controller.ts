@@ -7,7 +7,7 @@ import Except from '#utils/except'
 import magicLink from '#utils/magic_link'
 
 export default class OperationsController {
-  async requestLogin({ request }: HttpContext) {
+  async loginRequest({ request }: HttpContext) {
     const body = request.body()
 
     const user = await User.getWithOperations(body.email)

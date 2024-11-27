@@ -34,7 +34,7 @@ router
     router
       .group(() => {
         router.post('create', [accountsUsersController, 'create'])
-        router.post('login', [accountsOperationsController, 'requestLogin'])
+        router.post('login', [accountsOperationsController, 'loginRequest'])
       })
       .use(middleware.validateBody(userSchema.pick({ email: true })))
       .prefix('request')
