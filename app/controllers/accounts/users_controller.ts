@@ -4,6 +4,8 @@ import Operation from '#models/accounts/operation'
 import magicLink from '#utils/magic_link'
 import Except from '#utils/except'
 
+import mailer from '#services/mailer'
+
 export default class UsersController {
   async create({ request }: HttpContext) {
     const body = request.body()
@@ -15,11 +17,13 @@ export default class UsersController {
     if (operationKeys === null) return Except.internalServerError()
 
     if (checkUser !== null)
-      console.log(
-        `PH_EMAIL User exists: ${user.email} - Link: ${magicLink('connect', operationKeys)}`
-      )
+      await mailer.sendConnect(user.email, {
+        CONNECT: magicLink('connect', operationKeys),
+      })
     else
-      console.log(`PH_EMAIL New user: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
+      await mailer.sendCreateAccount(user.email, {
+        CONNECT: magicLink('connect', operationKeys),
+      })
   }
 
   async me({ auth }: HttpContext) {

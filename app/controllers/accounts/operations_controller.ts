@@ -6,6 +6,8 @@ import User from '#models/accounts/user'
 import Except from '#utils/except'
 import magicLink from '#utils/magic_link'
 
+import mailer from '#services/mailer'
+
 export default class OperationsController {
   async login({ request }: HttpContext) {
     const body = request.body()
@@ -19,7 +21,11 @@ export default class OperationsController {
     if (operationKeys === null)
       return Except.internalServerError('http', { debug: 'Failed to create connect operation' })
 
-    console.log(`PH_EMAIL Email: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
+    console.log(user.email)
+
+    await mailer.sendConnect(user.email, {
+      CONNECT: magicLink('connect', operationKeys),
+    })
   }
 
   async connect({ request }: HttpContext) {

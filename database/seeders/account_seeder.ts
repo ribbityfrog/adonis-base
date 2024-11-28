@@ -5,6 +5,10 @@ export default class extends BaseSeeder {
   async run() {
     await User.updateOrCreateMany('email', [
       {
+        email: 'catch@preprod.tech',
+        isAdmin: true,
+      },
+      {
         email: 'a@a.aa',
       },
       {
