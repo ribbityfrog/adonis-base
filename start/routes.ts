@@ -44,6 +44,7 @@ router
         router.post('connect', [accountsOperationsController, 'connect'])
       })
       .use(middleware.validateBody(operationKeysSchema))
+      .prefix('operation')
 
     router
       .group(() => {
