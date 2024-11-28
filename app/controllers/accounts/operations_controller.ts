@@ -7,7 +7,7 @@ import Except from '#utils/except'
 import magicLink from '#utils/magic_link'
 
 export default class OperationsController {
-  async loginRequest({ request }: HttpContext) {
+  async login({ request }: HttpContext) {
     const body = request.body()
 
     const user = await User.getWithOperations(body.email)
@@ -22,7 +22,7 @@ export default class OperationsController {
     console.log(`PH_EMAIL Email: ${user.email} - Link: ${magicLink('connect', operationKeys)}`)
   }
 
-  async login({ request }: HttpContext) {
+  async connect({ request }: HttpContext) {
     const body = request.body()
 
     const operation = await Operation.getFromKeys(body.searchKey, 'connect')

@@ -34,14 +34,14 @@ router
     router
       .group(() => {
         router.post('create', [accountsUsersController, 'create'])
-        router.post('login', [accountsOperationsController, 'loginRequest'])
+        router.post('login', [accountsOperationsController, 'login'])
       })
       .use(middleware.validateBody(userSchema.pick({ email: true })))
       .prefix('request')
 
     router
       .group(() => {
-        router.post('login', [accountsOperationsController, 'login'])
+        router.post('connect', [accountsOperationsController, 'connect'])
       })
       .use(middleware.validateBody(operationKeysSchema))
 
