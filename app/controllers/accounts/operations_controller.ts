@@ -18,7 +18,19 @@ export default class OperationsController {
       return Except.internalServerError('http', { debug: 'Failed to create connect operation' })
 
     await mailer.sendConnect(user.email, {
-      CONNECT: magicLink('connect', operationKeys),
+      MLINK: magicLink('connect', operationKeys),
+    })
+  }
+
+  async newEmail({ auth, request }: HttpContext) {
+    if (!auth?.user) return Except.forbidden()
+
+    const operationKeys = await Operation.createForUser(auth.user, 'newEmail', request.body())
+    if (operationKeys === null)
+      return Except.internalServerError('http', { debug: 'Failed to create new email operation' })
+
+    await mailer.sendNewEmail(auth.user.email, {
+      MLINK: magicLink('newEmail', operationKeys),
     })
   }
 }

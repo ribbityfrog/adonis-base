@@ -11,20 +11,6 @@ export default class ConnectionsController {
     const operationKeys = request.body() as OperationKeys
 
     const operation = await Operation.useOrFail(operationKeys, 5, 'connect')
-    // const operation = await Operation.getFromKeys(body.searchKey, 'connect')
-    // if (operation === null) return Except.forbidden()
-
-    // if (operation.createdAt.plus({ minutes: 5 }) <= DateTime.now()) {
-    //   await operation.delete()
-    //   return Except.forbidden()
-    // }
-
-    // const checkHash = await hash.verify(operation.verificationKey, body.verificationKey)
-    // if (checkHash === false) {
-    //   await operation.delete()
-    //   return Except.forbidden()
-    // }
-
     const token = await User.accessTokens.create(operation.user, [
       operation.user.isAdmin ? 'admin' : 'user',
     ])

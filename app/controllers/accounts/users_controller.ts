@@ -5,6 +5,7 @@ import magicLink from '#utils/magic_link'
 import Except from '#utils/except'
 
 import mailer from '#services/mailer'
+import { OperationKeys } from '#schemas/accounts/operation'
 
 export default class UsersController {
   async create({ request }: HttpContext) {
@@ -18,12 +19,22 @@ export default class UsersController {
 
     if (checkUser !== null)
       await mailer.sendConnect(user.email, {
-        CONNECT: magicLink('connect', operationKeys),
+        MLINK: magicLink('connect', operationKeys),
       })
     else
       await mailer.sendCreateAccount(user.email, {
-        CONNECT: magicLink('connect', operationKeys),
+        MLINK: magicLink('connect', operationKeys),
       })
+  }
+
+  async newEmail({ request }: HttpContext) {
+    const operationKeys = request.body() as OperationKeys
+
+    const operation = await Operation.useOrFail(operationKeys, 5, 'newEmail')
+
+    operation.user.email = operation.data.email
+    await operation.user.save()
+    await operation.delete()
   }
 
   async me({ auth }: HttpContext) {

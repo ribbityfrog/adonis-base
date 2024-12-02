@@ -15,6 +15,10 @@ export default function () {
         .group(() => {
           router.post('create', [accountsUsersController, 'create'])
           router.post('login', [accountsOperationsController, 'login'])
+
+          router
+            .post('newEmail', [accountsOperationsController, 'newEmail'])
+            .use(middleware.auth({ guards: ['api'] }))
         })
         .use(middleware.validateBody(userSchema.pick({ email: true })))
         .prefix('request')
@@ -22,6 +26,7 @@ export default function () {
       router
         .group(() => {
           router.post('connect', [accountsConnectionsController, 'connect'])
+          router.post('newEmail', [accountsUsersController, 'newEmail'])
         })
         .use(middleware.validateBody(operationKeysSchema))
         .prefix('operation')

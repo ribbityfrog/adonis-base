@@ -52,8 +52,11 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
 
       table.enum('operation_type', operationTypes).notNullable()
+
       table.string('search_key').notNullable()
       table.string('verification_key').notNullable()
+
+      table.jsonb('data').notNullable().defaultTo('{}')
     })
   }
 

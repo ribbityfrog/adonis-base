@@ -73,7 +73,7 @@ export default class Brevo {
 
   async sendCreateAccount(
     to: string,
-    params: { CONNECT: string },
+    params: { MLINK: string },
     options: SendSmtpEmail = {}
   ): Promise<boolean> {
     return await this.sendTransacEmail(savedTemplates.connect, to, params, options)
@@ -81,10 +81,14 @@ export default class Brevo {
 
   async sendConnect(
     to: string,
-    params: { CONNECT: string },
+    params: { MLINK: string },
     options: SendSmtpEmail = {}
   ): Promise<boolean> {
     return await this.sendTransacEmail(savedTemplates.createAccount, to, params, options)
+  }
+
+  async sendNewEmail(to: string, params: { MLINK: string }, options: SendSmtpEmail = {}) {
+    return await this.sendTransacEmail(savedTemplates.newEmail, to, params, options)
   }
 
   async sendTransacEmail(

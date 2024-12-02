@@ -32,6 +32,9 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   @column()
   declare verificationKey: string // argon2 string
 
+  @column()
+  declare data: any
+
   static async getFromKeys(searchKey: string, operationType: OperationType) {
     return await Operation.query()
       .preload('user')
@@ -78,6 +81,7 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   static async createForUser(
     user: User,
     operationType: OperationType,
+    data: any = null,
     clearPreviousEntries: boolean = true
   ): Promise<OperationKeys | null> {
     if (clearPreviousEntries) await user.clearOperations(operationType)
@@ -91,6 +95,7 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
       operationType,
       searchKey,
       verificationKey: await hash.make(verificationKey),
+      data,
     })
 
     return { searchKey, verificationKey }
