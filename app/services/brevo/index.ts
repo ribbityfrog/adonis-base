@@ -2,14 +2,21 @@
 import env from '#start/env'
 import Except from '#utils/except'
 import logger from '@adonisjs/core/services/logger'
-import brevoSdk, { TransactionalEmailsApi, AccountApi, SendSmtpEmail } from '@getbrevo/brevo'
+import brevoSdk, {
+  TransactionalEmailsApi,
+  AccountApi,
+  SendSmtpEmail,
+  ContactsApi,
+} from '@getbrevo/brevo'
 
 import savedTemplates from '#services/brevo/saved_templates'
+import savedContactsLists from '#services/brevo/saved_contacts_lists'
 
 export default class Brevo {
   private _instance: any
   private _apiKey: string
-  private _Apitransactional: TransactionalEmailsApi
+  private _apiTransactional: TransactionalEmailsApi
+  private _apiContact: ContactsApi
   private _ready: boolean = false
 
   get isReady(): boolean {
@@ -17,28 +24,31 @@ export default class Brevo {
   }
 
   get instanceTransac(): TransactionalEmailsApi {
-    return this._Apitransactional
+    return this._apiTransactional
   }
 
   constructor() {
     this._instance = brevoSdk
     this._apiKey = env.get('BV_API_KEY')
 
-    this._Apitransactional = new this._instance.TransactionalEmailsApi()
+    this._apiTransactional = new this._instance.TransactionalEmailsApi()
+    this._apiContact = new this._instance.ContactsApi()
   }
 
   async init() {
-    if (!this._Apitransactional) {
+    if (!this._apiTransactional) {
       Except.serviceUnavailable('intern', {
         debug: '[service] Brevo - TransactionalEmailsApi could not be instantiated',
       })
       return
     }
 
-    this._Apitransactional.setApiKey(
+    this._apiTransactional.setApiKey(
       this._instance.TransactionalEmailsApiApiKeys.apiKey,
       this._apiKey
     )
+
+    this._apiContact.setApiKey(this._instance.ContactsApiApiKeys.apiKey, this._apiKey)
 
     await this.checkAccount()
     this._ready = true
@@ -111,7 +121,7 @@ export default class Brevo {
       }
 
     let isSent = false
-    await this._Apitransactional
+    await this._apiTransactional
       .sendTransacEmail(transacEmail)
       .then(() => (isSent = true))
       .catch((error) =>
@@ -119,5 +129,51 @@ export default class Brevo {
       )
 
     return isSent
+  }
+
+  async addInTestList(contact: Record<string, string> & { email: string }) {
+    return await this.addContact([savedContactsLists.test], contact)
+  }
+
+  async removeFromTestList(emails: string | string[]) {
+    const contactsEmails = Array.isArray(emails) ? emails : [emails]
+
+    return await this.removeContacts(savedContactsLists.test, contactsEmails)
+  }
+
+  async addContact(listIds: number[], contact: Record<string, string> & { email: string }) {
+    let isAdded = false
+
+    const { email, ...attributes } = contact
+
+    await this._apiContact
+      .createContact({
+        email,
+        listIds,
+        updateEnabled: true,
+        attributes,
+      })
+      .then(() => (isAdded = true))
+      .catch((error) =>
+        Except.internalServerError('none', { debug: { message: "Couldn't add contact", error } })
+      )
+
+    return isAdded
+  }
+
+  async removeContacts(listId: number, emails: string[]) {
+    let isRemoved = false
+
+    const contacts = new brevoSdk.RemoveContactFromList()
+    contacts.emails = emails
+
+    await this._apiContact
+      .removeContactFromList(listId, contacts)
+      .then(() => (isRemoved = true))
+      .catch((error) =>
+        Except.internalServerError('none', { debug: { message: "Couldn't remove contact", error } })
+      )
+
+    return isRemoved
   }
 }
