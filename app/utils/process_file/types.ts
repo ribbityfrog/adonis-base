@@ -1,5 +1,4 @@
 export type BasicFile = {
-  title: string
   name: string
   type: string
   subtype: string
