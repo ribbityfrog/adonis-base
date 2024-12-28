@@ -247,6 +247,22 @@ export default class Except {
     )
   }
 
+  static contentTooLarge(): void
+  static contentTooLarge(abort: ExceptAbort): void
+  static contentTooLarge(optionalData: OptionalData): void
+  static contentTooLarge(abort: ExceptAbort, optionalData: OptionalData): void
+  static contentTooLarge(param1?: any, param2?: any): void {
+    Except.custom(
+      {
+        status: 413,
+        code: 'CONTENT_TOO_LARGE',
+        message: 'The request content is too large',
+      },
+      param1,
+      param2
+    )
+  }
+
   static unsupportedMediaType(): void
   static unsupportedMediaType(abort: ExceptAbort): void
   static unsupportedMediaType(optionalData: OptionalData): void
@@ -257,6 +273,22 @@ export default class Except {
         status: 415,
         code: 'UNSUPPORTED_MEDIA_TYPE',
         message: 'The request content media type is not supported',
+      },
+      param1,
+      param2
+    )
+  }
+
+  static expectationFailed(): void
+  static expectationFailed(abort: ExceptAbort): void
+  static expectationFailed(optionalData: OptionalData): void
+  static expectationFailed(abort: ExceptAbort, optionalData: OptionalData): void
+  static expectationFailed(param1?: any, param2?: any): void {
+    Except.custom(
+      {
+        status: 417,
+        code: 'EXPECTATION_FAILED',
+        message: 'The expectation failed',
       },
       param1,
       param2
