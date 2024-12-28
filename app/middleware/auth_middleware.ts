@@ -17,12 +17,15 @@ export default class AuthMiddleware {
     ctx: HttpContext,
     next: NextFn,
     options: {
+      silent?: boolean
       guards?: (keyof Authenticators)[]
     } = {}
   ) {
     await ctx.auth
       .authenticateUsing(options.guards, { loginRoute: this.redirectTo })
-      .catch((error) => Except.unauthorized('both', { debug: error }))
+      .catch((error) => {
+        if (options?.silent !== true) Except.unauthorized({ debug: error })
+      })
     return next()
   }
 }
