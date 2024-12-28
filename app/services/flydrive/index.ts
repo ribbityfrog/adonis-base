@@ -26,8 +26,8 @@ export default class Flydrive {
       )
   }
 
-  async store(path: string, buffer: Buffer): Promise<boolean> {
-    if ((await this.exists(path)) === true) {
+  async store(path: string, buffer: Buffer, deleteIfExists: boolean = false): Promise<boolean> {
+    if (!deleteIfExists && (await this.exists(path)) === true) {
       Except.conflict('none', { debug: { message: '[service] Flydrive - File already exists' } })
       return false
     }
@@ -127,7 +127,7 @@ export default class Flydrive {
 
     await this._disk
       .exists(path)
-      .then(() => (doesExist = true))
+      .then((resp) => (doesExist = resp))
       .catch((error) =>
         Except.serviceUnavailable('none', {
           debug: { message: '[service] Flydrive - Failed to check if the item exists', error },
@@ -144,6 +144,17 @@ export default class Flydrive {
       .catch((error) =>
         Except.serviceUnavailable('none', {
           debug: { message: '[service] Flydrive - Failed to delete item', error },
+        })
+      )
+  }
+
+  async deleteAll(path: string): Promise<void> {
+    await this._disk
+      .deleteAll(path)
+      .then()
+      .catch((error) =>
+        Except.serviceUnavailable('none', {
+          debug: { message: '[service] Flydrive - Failed to delete all items', error },
         })
       )
   }
