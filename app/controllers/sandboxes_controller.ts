@@ -65,6 +65,7 @@ export default class SandboxesController {
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ])
 
+    let ite = 0
     page.on('response', async (response) => {
       const url = response.url()
       const param = url.split('/').slice(-1)[0]
@@ -74,10 +75,12 @@ export default class SandboxesController {
         !param.includes('_') &&
         !param.includes('.png')
       ) {
+        const nameExt = ite
+        ite++
         response.buffer().then((file) => {
           const filePath = path.resolve(
             path.dirname(fileURLToPath(import.meta.url)),
-            `${param}.png`
+            `name-${nameExt}.png`
           )
           const writeStream = fs.createWriteStream(filePath)
           writeStream.write(file)
@@ -105,7 +108,8 @@ export default class SandboxesController {
   }
 
   async tesseract() {
-    const imgPath = 'C:\\Users\\pierr\\Downloads\\img3.png'
+    const imgPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'name-1.png')
+    // 'C:\\Users\\pierr\\Downloads\\img3.png'
 
     const worker = await createWorker('fra')
     const pl = await worker.recognize(imgPath)
