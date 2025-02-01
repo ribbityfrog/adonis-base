@@ -6,6 +6,7 @@ import fs from 'node:fs'
 
 import puppeteer from 'puppeteer-core'
 import { createWorker } from 'tesseract.js'
+import logger from '@adonisjs/core/services/logger'
 
 export default class SandboxesController {
   async inaric() {
@@ -32,18 +33,23 @@ export default class SandboxesController {
 
   async mars() {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     })
     const page = await browser.newPage()
 
     await page.setViewport({ width: 1080, height: 1024 })
 
+    logger.info('Browser ready')
+
     await page.goto('https://www.elections-professionnelles.travail.gouv.fr/web/guest/login', {
       waitUntil: 'load',
     })
     await page.type('input[id*="login"]', env.get('CFTC_MARS_USERNAME'))
     await page.type('input[id*="password"]', env.get('CFTC_MARS_PASSWORD'))
+
+    logger.info('Connected to account')
+
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
@@ -55,6 +61,9 @@ export default class SandboxesController {
       }
     )
     await page.type('input[placeholder="000 000 000 (00000)"]', '50413998100048')
+
+    logger.info('Company found')
+
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
@@ -64,6 +73,8 @@ export default class SandboxesController {
       page.click('.ui-commandlink'),
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ])
+
+    logger.info('Data chosen')
 
     let ite = 0
     page.on('response', async (response) => {
@@ -87,6 +98,8 @@ export default class SandboxesController {
         })
       }
     })
+
+    logger.info('Collecting')
 
     await Promise.all([
       page.evaluate(() => {
