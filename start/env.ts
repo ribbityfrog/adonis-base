@@ -65,4 +65,14 @@ export default await Env.create(new URL('../', import.meta.url), {
   S3_ENDPOINT: Env.schema.string(),
   S3_ACL: Env.schema.boolean(),
   S3_VISIBILITY: Env.schema.enum(['public', 'private'] as const),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for CFTC Access
+  |----------------------------------------------------------
+  */
+  CFTC_MARS_USERNAME: Env.schema.string(),
+  CFTC_MARS_PASSWORD: Env.schema.string(),
+  CFTC_INARIC_USERNAME: Env.schema.string(),
+  CFTC_INARIC_PASSWORD: Env.schema.string(),
 })
