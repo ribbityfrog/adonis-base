@@ -30,14 +30,14 @@ export default class ThirdProvider {
       .then()
       .catch(() => {})
 
-    const scheduler = await this.app.container.make(Bree)
-    await scheduler
-      .init()
-      .then()
-      .catch(() => {})
+    // const scheduler = await this.app.container.make(Bree)
+    // await scheduler
+    //   .init()
+    //   .then()
+    //   .catch(() => {})
 
-    const storage = await this.app.container.make(Flydrive)
-    await storage.checkInit()
+    // const storage = await this.app.container.make(Flydrive)
+    // await storage.checkInit()
   }
 
   /**
