@@ -32,7 +32,9 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   @column()
   declare verificationKey: string // argon2 string
 
-  @column()
+  @column({
+    prepare: (value: any) => value ?? {},
+  })
   declare data: any
 
   static async getFromKeys(searchKey: string, operationType: OperationType) {

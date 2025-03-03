@@ -1,29 +1,51 @@
+import env from '#start/env'
 import { Disk } from 'flydrive'
+import { S3DriverOptions } from 'flydrive/drivers/s3/types'
 import { S3Driver } from 'flydrive/drivers/s3'
-import storageConfig from '#config/storage'
 import Except from '#utils/except'
 import { SignedURLOptions } from 'flydrive/types'
 import logger from '@adonisjs/core/services/logger'
 
 export default class Flydrive {
   private _disk: Disk
+  private _isInitialized: boolean = false
 
   constructor() {
-    this._disk = new Disk(new S3Driver(storageConfig))
+    const config: S3DriverOptions = {
+      credentials: {
+        accessKeyId: env.get('S3_ACCESS_KEY_ID') ?? 'empty',
+        secretAccessKey: env.get('S3_SECRET_ACCESS_KEY') ?? 'empty',
+      },
+
+      endpoint: env.get('S3_ENDPOINT') ?? 'empty',
+      region: env.get('S3_REGION'),
+      bucket: env.get('S3_BUCKET') ?? 'empty',
+
+      supportsACL: env.get('S3_ACL') ?? false,
+      visibility: env.get('S3_VISIBILITY') ?? 'private',
+    }
+
+    if (config.endpoint === 'empty') logger.warn('[service] Flydrive - No endpoint provided')
+    else this._isInitialized = true
+
+    this._disk = new Disk(new S3Driver(config))
   }
 
   async checkInit() {
+    if (!this._isInitialized) return
+
     await this._disk
       .exists('dummy')
       .then(() => logger.info('[service] Flydrive - Started, account seems valid'))
-      .catch((error) =>
+      .catch((error) => {
+        this._isInitialized = false
         Except.serviceUnavailable('none', {
           debug: {
             message: '[service] Flydrive - Most likely failed to validate configuration',
             error,
           },
         })
-      )
+      })
   }
 
   async store(path: string, buffer: Buffer, deleteIfExists: boolean = false): Promise<boolean> {

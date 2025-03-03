@@ -1,12 +1,12 @@
 import app from '@adonisjs/core/services/app'
-import Brevo from '#services/brevo/index'
+import Flydrive from '#services/thirds/flydrive/index'
 
-let mailer: Brevo
+let storage: Flydrive
 /**
  * Returns a singleton instance of the Database class from the
  * container
  */
 await app.booted(async () => {
-  mailer = await app.container.make(Brevo)
+  storage = await app.container.make(Flydrive)
 })
-export { mailer as default }
+export { storage as default }

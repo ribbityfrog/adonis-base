@@ -16,9 +16,9 @@ export default function () {
           router.post('create', [accountsUsersController, 'create'])
           router.post('login', [accountsOperationsController, 'login'])
 
-          router
-            .post('newEmail', [accountsOperationsController, 'newEmail'])
-            .use(middleware.auth({ guards: ['api'] }))
+          // router
+          //   .post('newEmail', [accountsOperationsController, 'newEmail'])
+          //   .use(middleware.auth({ guards: ['api'] }))
         })
         .use(middleware.validateBody(userSchema.pick({ email: true })))
         .prefix('request')

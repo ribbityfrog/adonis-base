@@ -4,7 +4,7 @@ import Operation from '#models/accounts/operation'
 import magicLink from '#utils/magic_link'
 import Except from '#utils/except'
 
-import mailer from '#services/mailer'
+import mailer from '#services/thirds/mailer'
 import { OperationKeys } from '#schemas/accounts/operation'
 
 export default class UsersController {
@@ -18,11 +18,11 @@ export default class UsersController {
     if (operationKeys === null) return Except.internalServerError()
 
     if (checkUser !== null)
-      await mailer.sendConnect(user.email, {
+      await mailer.transactional?.sendConnect(user.email, 'fr', {
         MLINK: magicLink('connect', operationKeys),
       })
     else
-      await mailer.sendCreateAccount(user.email, {
+      await mailer.transactional?.sendCreateAccount(user.email, 'fr', {
         MLINK: magicLink('connect', operationKeys),
       })
   }

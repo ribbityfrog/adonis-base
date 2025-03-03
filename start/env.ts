@@ -30,39 +30,38 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   FRONT_ORIGIN: Env.schema.string(),
-  MAGIC_CONNECT: Env.schema.string(),
+  MAGIC_CONNECT: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
   | Variables for configuring database connection
   |----------------------------------------------------------
   */
-  DB_HOST: Env.schema.string({ format: 'host' }),
-  DB_PORT: Env.schema.number(),
-  DB_USER: Env.schema.string(),
-  DB_PASSWORD: Env.schema.string.optional(),
-  DB_DATABASE: Env.schema.string(),
+  POSTGRESQL_ADDON_DB: Env.schema.string(),
+  POSTGRESQL_ADDON_HOST: Env.schema.string({ format: 'host' }),
+  POSTGRESQL_ADDON_USER: Env.schema.string(),
+  POSTGRESQL_ADDON_PASSWORD: Env.schema.string.optional(),
+  POSTGRESQL_ADDON_PORT: Env.schema.number(),
 
   /*
   |----------------------------------------------------------
   | Variables for configuring mail service
   |----------------------------------------------------------
   */
-  BV_API_KEY: Env.schema.string(),
-  BV_SENDER_EMAIL_DEFAULT: Env.schema.string({ format: 'email' }),
-  BV_SENDER_NAME_DEFAULT: Env.schema.string(),
-  BV_RECEIVER_TEST: Env.schema.string({ format: 'email' }),
+  BV_API_KEY: Env.schema.string.optional(),
+  BV_SENDER_EMAIL_DEFAULT: Env.schema.string.optional({ format: 'email' }),
+  BV_SENDER_NAME_DEFAULT: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
   | Variables for configuring S3 storage service
   |----------------------------------------------------------
   */
-  S3_ACCESS_KEY_ID: Env.schema.string(),
-  S3_SECRET_ACCESS_KEY: Env.schema.string(),
-  S3_REGION: Env.schema.string(),
-  S3_BUCKET: Env.schema.string(),
-  S3_ENDPOINT: Env.schema.string(),
-  S3_ACL: Env.schema.boolean(),
-  S3_VISIBILITY: Env.schema.enum(['public', 'private'] as const),
+  S3_ACCESS_KEY_ID: Env.schema.string.optional(),
+  S3_SECRET_ACCESS_KEY: Env.schema.string.optional(),
+  S3_REGION: Env.schema.string.optional(),
+  S3_BUCKET: Env.schema.string.optional(),
+  S3_ENDPOINT: Env.schema.string.optional(),
+  S3_ACL: Env.schema.boolean.optional(),
+  S3_VISIBILITY: Env.schema.enum.optional(['public', 'private'] as const),
 })

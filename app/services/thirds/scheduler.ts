@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import Bree from '#services/bree/index'
+import Bree from '#services/thirds/bree/index'
 
 let scheduler: Bree
 /**
