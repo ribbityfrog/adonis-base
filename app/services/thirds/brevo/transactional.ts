@@ -4,7 +4,6 @@ import type { TransactionalEmailsApi, SendSmtpEmail } from '@getbrevo/brevo'
 
 import sendersList from '#services/thirds/brevo/lists/senders'
 import templatesList from '#services/thirds/brevo/lists/templates'
-import { LanguageCode } from '#utils/lang'
 
 export default class Transactional {
   private _apiInstance: TransactionalEmailsApi
@@ -21,33 +20,35 @@ export default class Transactional {
     this._apiInstance.setApiKey(sdk.TransactionalEmailsApiApiKeys.apiKey, apiKey)
   }
 
-  async sendTest(email: string, lang: LanguageCode = 'fr') {
-    return await this.send(templatesList.test[lang], email, {
+  async sendTest(email: string) {
+    return await this.send(templatesList.test, email, {
       PARAM: 'Params too',
     })
   }
 
-  async sendCreateAccount(
+  async sendAccountCreate(
     to: string,
-    lang: LanguageCode,
     params: { MLINK: string },
     options: SendSmtpEmail = {}
   ): Promise<boolean> {
-    return await this.send(templatesList.createAccount[lang], to, params, options)
+    return await this.send(templatesList.accountConnect, to, params, options)
   }
 
-  async sendConnect(
+  async sendAccountConnect(
     to: string,
-    lang: LanguageCode,
     params: { MLINK: string },
     options: SendSmtpEmail = {}
   ): Promise<boolean> {
-    return await this.send(templatesList.connect[lang], to, params, options)
+    return await this.send(templatesList.accountCreate, to, params, options)
   }
 
-  // async sendNewEmail(to: string, params: { MLINK: string }, options: SendSmtpEmail = {}) {
-  //   return await this.sendTransacEmail(savedTemplates.newEmail, to, params, options)
-  // }
+  async sendAccountBanned(to: string) {
+    return await this.send(templatesList.accountBanned, to)
+  }
+
+  async sendProfileUpdateEmail(to: string, params: { MLINK: string }, options: SendSmtpEmail = {}) {
+    return await this.send(templatesList.profileUpdateEmail, to, params, options)
+  }
 
   async send(
     templateId: number,
@@ -62,7 +63,8 @@ export default class Transactional {
 
     if (params && Object.keys(params).length > 0) transacEmail.params = params
 
-    if (!transacEmail.sender) transacEmail.sender = sendersList.default
+    if (!transacEmail.sender)
+      transacEmail.sender = sendersList?.transactional ?? sendersList.default
 
     let isSent = false
 

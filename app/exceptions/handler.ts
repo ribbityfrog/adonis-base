@@ -1,6 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { ExceptionHandler } from '@adonisjs/core/http'
 import Except from '#utils/except'
+import { exceptIntelsSchema } from '#utils/except/types'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -15,6 +16,9 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    */
   async handle(error: any) {
     if (error?.code === 'E_ROUTE_NOT_FOUND') Except.routeNotFound()
+
+    if (!exceptIntelsSchema.safeParse(error?.body).success)
+      return Except.internalServerError({ debug: { type: error.type, message: error.message } })
 
     // return super.handle(error, ctx)
   }

@@ -16,7 +16,10 @@ export default class extends BaseSchema {
       defaultFieldsMigration(this, table)
 
       table.string('email', 254).notNullable().unique()
-      // table.string('password').notNullable()
+      table.string('password').notNullable()
+
+      table.boolean('is_verified').notNullable().defaultTo(false)
+      table.boolean('is_banned').notNullable().defaultTo(false)
 
       table.boolean('is_admin').notNullable().defaultTo(false)
 
@@ -57,6 +60,8 @@ export default class extends BaseSchema {
       table.string('verification_key').notNullable()
 
       table.jsonb('data').notNullable().defaultTo('{}')
+
+      table.timestamp('expire_at').notNullable()
     })
   }
 

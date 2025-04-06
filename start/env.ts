@@ -30,7 +30,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   FRONT_ORIGIN: Env.schema.string(),
-  MAGIC_CONNECT: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

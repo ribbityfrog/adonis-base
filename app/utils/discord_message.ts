@@ -3,7 +3,7 @@ import { ExceptIntels } from '#utils/except/types'
 
 class DiscordMessage {
   private _webhook = env.get('DISCORD_WEBHOOK')
-  private _headtext = `[Backend_${env.get('NODE_ENV')}] `
+  private _headtext = `[Adobase_${env.get('NODE_ENV')}] `
   private _nodeEnv = env.get('NODE_ENV')
 
   async exceptError(logs: {

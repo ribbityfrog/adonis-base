@@ -6,23 +6,24 @@ export default class extends BaseSeeder {
     await User.updateOrCreateMany('email', [
       {
         email: 'catch@preprod.tech',
+        password: '123soleil',
         isAdmin: true,
+        isVerified: true,
       },
       {
-        email: 'a@a.aa',
+        email: 'a@preprod.tech',
+        password: '123soleil',
       },
       {
-        email: 'b@b.bb',
+        email: 'b@preprod.tech',
+        password: '123soleil',
+        isVerified: true,
       },
       {
-        email: 'c@c.cc',
+        email: 'c@preprod.tech',
+        password: '123soleil',
         isAdmin: true,
-      },
-      {
-        email: 'd@d.dd',
-      },
-      {
-        email: 'e@e.ee',
+        isVerified: true,
       },
     ])
   }

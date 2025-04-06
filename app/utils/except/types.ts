@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export type ExceptIntels = {
   status: number
   code: ExceptCode
@@ -25,3 +27,10 @@ const exceptCodes = [
   'GATEWAY_TIMEOUT',
 ] as const
 export type ExceptCode = (typeof exceptCodes)[number]
+
+export const exceptIntelsSchema = z.object({
+  status: z.number(),
+  code: z.enum(exceptCodes),
+  message: z.string().optional(),
+  critical: z.boolean(),
+})

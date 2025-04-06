@@ -1,26 +1,22 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Operation from '#models/accounts/operation'
-import User from '#models/accounts/user'
-import Except from '#utils/except'
-import magicLink from '#utils/magic_link'
 
-import mailer from '#services/thirds/mailer'
+import Operation from '#models/accounts/operation'
+
+import type { OperationKeys } from '#schemas/accounts/operation'
 
 export default class OperationsController {
-  async login({ request }: HttpContext) {
-    const body = request.body()
+  async connect({ request }: HttpContext) {
+    const opeKeys = request.body() as OperationKeys
 
-    const user = await User.getWithOperations(body.email)
-    if (user === null) return
+    const operation = await Operation.useOrFail(opeKeys, 'connect')
 
-    const operationKeys = await Operation.createForUser(user, 'connect')
-    if (operationKeys === null)
-      return Except.internalServerError('http', { debug: 'Failed to create connect operation' })
+    const token = await operation.user.createToken(true)
+    await operation.delete()
 
-    await mailer.transactional?.sendConnect(user.email, 'fr', {
-      MLINK: magicLink('connect', operationKeys),
-    })
+    return token
   }
+
+  async updateEmail() {}
 
   // async newEmail({ auth, request }: HttpContext) {
   //   if (!auth?.user) return Except.forbidden()
