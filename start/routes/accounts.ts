@@ -60,7 +60,7 @@ export default function () {
             .use(middleware.validateBody(userCredentialsSchema))
 
           router
-            .post('login-link', [accountsRequestsController, 'loginLink'])
+            .post('login-passwordless', [accountsRequestsController, 'loginPasswordless'])
             .use(middleware.validateBody(userEmailSchema))
         })
         .prefix('request')

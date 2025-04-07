@@ -38,7 +38,7 @@ export default class RequestsController {
     return await user.createToken()
   }
 
-  async loginLink({ request }: HttpContext) {
+  async loginPasswordless({ request }: HttpContext) {
     const email = request.body().email.toLowerCase()
 
     const user = await User.findBy('email', email)

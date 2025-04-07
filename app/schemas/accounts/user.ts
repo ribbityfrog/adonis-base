@@ -27,4 +27,5 @@ export const userCredentialsSchema = z
   .strict()
 
 export type UserCredentialsSchema = z.infer<typeof userCredentialsSchema>
+export type UserEmailSchema = z.infer<typeof userEmailSchema>
 export type UserPasswordSchema = z.infer<typeof userPasswordSchema>
