@@ -1,7 +1,7 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 import { defaultFieldsMigration } from '#models/mixins/default_fields'
 
-import { operationTypes } from '#models/accounts/types'
+import { operationTypes } from '#schemas/accounts/types'
 
 export default class extends BaseSchema {
   protected accountsSchema = 'accounts'

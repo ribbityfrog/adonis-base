@@ -1,4 +1,4 @@
-import type { OperationType } from '#models/accounts/types'
+import type { OperationType } from '#schemas/accounts/types'
 import type { OperationKeys } from '#schemas/accounts/operation'
 import env from '#start/env'
 

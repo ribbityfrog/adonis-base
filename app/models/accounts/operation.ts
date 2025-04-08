@@ -3,7 +3,7 @@ import { compose } from '@adonisjs/core/helpers'
 import withDefaultFields from '#models/mixins/default_fields'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
-import type { OperationType } from '#models/accounts/types'
+import type { OperationType } from '#schemas/accounts/types'
 
 import User from '#models/accounts/user'
 import type { UUID } from 'node:crypto'
@@ -52,20 +52,20 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   static async useOrFail(keys: OperationKeys, operationType: OperationType): Promise<Operation> {
     const operation = await Operation.getFromKeys(keys.searchKey, operationType)
 
-    if (operation === null) Except.forbidden()
+    if (operation === null) throw Except.forbidden()
 
     const checkHash = await hash.verify(operation!.verificationKey, keys.verificationKey)
     if (checkHash === false) {
       await operation!.delete()
-      Except.forbidden()
+      throw Except.forbidden()
     }
 
     if (operation!.expireAt <= DateTime.now()) {
       await operation!.delete()
-      Except.forbidden()
+      throw Except.forbidden()
     }
 
-    return operation as Operation
+    return operation
   }
 
   static async createSearchKey(): Promise<string> {

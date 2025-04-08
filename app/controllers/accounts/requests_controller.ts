@@ -31,9 +31,16 @@ export default class RequestsController {
     const email = body.email.toLowerCase()
     const password = body.password.trim()
 
-    const user = await User.verifyCredentials(email, password)
+    const user = await User.verifyCredentials(email, password).catch(() => {
+      throw Except.imATeapot()
+    })
 
-    if (!user || !user.isVerified || user.isBanned) return Except.imATeapot()
+    if (!user || !user.isVerified) return Except.imATeapot()
+
+    if (user.isBanned) {
+      await mailer.transactional?.sendAccountBanned(user.email)
+      return Except.imATeapot()
+    }
 
     return await user.createToken()
   }

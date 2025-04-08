@@ -10,7 +10,7 @@ import { DateTime } from 'luxon'
 import withDefaultFields from '#models/mixins/default_fields'
 
 import Operation from '#models/accounts/operation'
-import { OperationType } from '#models/accounts/types'
+import { OperationType } from '#schemas/accounts/types'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],

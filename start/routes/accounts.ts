@@ -1,7 +1,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 
-import { OperationType } from '#models/accounts/types'
+import { OperationType } from '#schemas/accounts/types'
 
 import operationKeysSchema from '#schemas/accounts/operation'
 import { userCredentialsSchema, userEmailSchema, userPasswordSchema } from '#schemas/accounts/user'

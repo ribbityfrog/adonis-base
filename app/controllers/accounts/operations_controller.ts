@@ -3,6 +3,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Operation from '#models/accounts/operation'
 
 import type { OperationKeys } from '#schemas/accounts/operation'
+import db from '@adonisjs/lucid/services/db'
 
 export default class OperationsController {
   async connect({ request }: HttpContext) {
@@ -16,17 +17,14 @@ export default class OperationsController {
     return token
   }
 
-  async updateEmail() {}
+  async updateEmail({ request }: HttpContext) {
+    const opeKeys = request.body() as OperationKeys
 
-  // async newEmail({ auth, request }: HttpContext) {
-  //   if (!auth?.user) return Except.forbidden()
+    const operation = await Operation.useOrFail(opeKeys, 'update-email')
 
-  //   const operationKeys = await Operation.createForUser(auth.user, 'newEmail', request.body())
-  //   if (operationKeys === null)
-  //     return Except.internalServerError('http', { debug: 'Failed to create new email operation' })
-
-  //   await mailer.transactional?.sendNewEmail(auth.user.email, 'fr', {
-  //     MLINK: magicLink('newEmail', operationKeys),
-  //   })
-  // }
+    operation.user.email = operation.data.email
+    await operation.user.save()
+    await db.query().from('accounts.connections').where('tokenable_id', operation.user.id).delete()
+    await operation.delete()
+  }
 }
