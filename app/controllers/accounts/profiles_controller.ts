@@ -5,7 +5,9 @@ import mailer from '#services/thirds/mailer'
 import magicLink from '#utils/magic_link'
 
 export default class ProfilesController {
-  async get() {}
+  async get({ auth }: HttpContext) {
+    return { email: auth.user!.email }
+  }
 
   async updatePassword() {}
 
