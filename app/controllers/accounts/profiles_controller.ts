@@ -11,6 +11,7 @@ export default class ProfilesController {
 
   async updatePassword({ request, auth }: HttpContext) {
     auth.user!.password = request.body().password.trim()
+    await auth.user!.save()
   }
 
   async updateEmail({ auth, request }: HttpContext) {

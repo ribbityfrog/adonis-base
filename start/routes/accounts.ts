@@ -27,7 +27,7 @@ export default function () {
 
           // router.post('update', [accountsProfilesController, 'update'])
           router
-            .put('update-password', [accountsProfilesController, 'updatePassword'])
+            .patch('update-password', [accountsProfilesController, 'updatePassword'])
             .use(middleware.validateBody(userPasswordSchema))
           router
             .post('update-email', [accountsProfilesController, 'updateEmail'])
