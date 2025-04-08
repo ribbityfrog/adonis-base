@@ -9,10 +9,12 @@ export default class ProfilesController {
     return { email: auth.user!.email }
   }
 
-  async updatePassword() {}
+  async updatePassword({ request, auth }: HttpContext) {
+    auth.user!.password = request.body().password.trim()
+  }
 
   async updateEmail({ auth, request }: HttpContext) {
-    const email = request.body().email.trim()
+    const email = request.body().email.trim().toLowerCase()
 
     const operationKeys = await Operation.createForUser(auth.user!, 'update-email', { email })
 

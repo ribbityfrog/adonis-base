@@ -11,7 +11,7 @@ export default class RequestsController {
   async create({ request }: HttpContext) {
     const body = request.body()
 
-    const email = body.email.toLowerCase()
+    const email = body.email.trim().toLowerCase()
     const password = body.password.trim()
 
     const checkUser = await User.findBy('email', email)
@@ -28,7 +28,7 @@ export default class RequestsController {
   async login({ request }: HttpContext) {
     const body = request.body()
 
-    const email = body.email.toLowerCase()
+    const email = body.email.trim().toLowerCase()
     const password = body.password.trim()
 
     const user = await User.verifyCredentials(email, password).catch(() => {
@@ -46,7 +46,7 @@ export default class RequestsController {
   }
 
   async loginPasswordless({ request }: HttpContext) {
-    const email = request.body().email.toLowerCase()
+    const email = request.body().email.trim().toLowerCase()
 
     const user = await User.findBy('email', email)
     if (!user) return
