@@ -12,6 +12,7 @@ import { middleware } from './kernel.js'
 
 // Routes
 import AccountsRoutes from '#routes/accounts'
+import AdminRoutes from '#routes/admin'
 
 router.get('/', () => 'Hello :)')
 router.get('/favicon.ico', () => 'Not a website ^^')
@@ -26,3 +27,4 @@ router
   .use(middleware.admin())
 
 AccountsRoutes()
+AdminRoutes()
