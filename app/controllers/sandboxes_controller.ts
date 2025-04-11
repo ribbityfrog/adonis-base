@@ -103,7 +103,7 @@ export default class SandboxesController {
 
     await Promise.all([
       page.evaluate(() => {
-        document.getElementsByClassName('ui-commandlink')[0].click()
+        ;(document.getElementsByClassName('ui-commandlink')[0] as HTMLElement).click()
       }),
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ])
@@ -121,7 +121,7 @@ export default class SandboxesController {
   }
 
   async tesseract() {
-    const imgPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'name-1.png')
+    const imgPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'name-0.png')
     // 'C:\\Users\\pierr\\Downloads\\img3.png'
 
     const worker = await createWorker('fra')
