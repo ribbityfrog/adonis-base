@@ -2,6 +2,7 @@ import { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger'
 import { ExceptIntels } from '#utils/except/types'
 import type { ExceptAbort } from '#utils/except/types'
+import discordMessage from './discord_message.js'
 
 type OptionalData = {
   debug?: any
@@ -91,21 +92,25 @@ export default class Except {
     else if (this.statusRange === 400) logger.warn(logs)
     else logger.error(logs)
 
+    if (this.statusRange === 500 || this.intels.critical) {
+      discordMessage.exceptError(logs)
+    }
+
     if (this.isAborted) {
       if (this.isHttpContext === false) throw this._intels
       else this._ctx?.response.abort(this._intels, this._intels.status)
     }
   }
 
-  static custom(): void
-  static custom(intels?: Partial<ExceptIntels>, abort?: ExceptAbort): void
-  static custom(intels?: Partial<ExceptIntels>, optionalData?: OptionalData): void
+  static custom(): null
+  static custom(intels?: Partial<ExceptIntels>, abort?: ExceptAbort): null
+  static custom(intels?: Partial<ExceptIntels>, optionalData?: OptionalData): null
   static custom(
     intels?: Partial<ExceptIntels>,
     abort?: ExceptAbort,
     optionalData?: OptionalData
-  ): void
-  static custom(intels?: Partial<ExceptIntels>, param2?: any, param3?: any): void {
+  ): null
+  static custom(intels?: Partial<ExceptIntels>, param2?: any, param3?: any): null {
     let abort: ExceptAbort | undefined
     let optionalData: OptionalData | undefined
 
@@ -117,14 +122,16 @@ export default class Except {
 
     const except = new Except(intels, abort, optionalData)
     except._launch()
+
+    return null
   }
 
-  static imATeapot(): void
-  static imATeapot(abort: ExceptAbort): void
-  static imATeapot(optionalData: OptionalData): void
-  static imATeapot(abort: ExceptAbort, optionalData: OptionalData): void
-  static imATeapot(param1?: any, param2?: any): void {
-    Except.custom(
+  static imATeapot(): null
+  static imATeapot(abort: ExceptAbort): null
+  static imATeapot(optionalData: OptionalData): null
+  static imATeapot(abort: ExceptAbort, optionalData: OptionalData): null
+  static imATeapot(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 418,
         code: 'IM_A_TEAPOT',
@@ -135,12 +142,12 @@ export default class Except {
     )
   }
 
-  static routeNotFound(): void
-  static routeNotFound(abort: ExceptAbort): void
-  static routeNotFound(optionalData: OptionalData): void
-  static routeNotFound(abort: ExceptAbort, optionalData: OptionalData): void
-  static routeNotFound(param1?: any, param2?: any): void {
-    Except.custom(
+  static routeNotFound(): null
+  static routeNotFound(abort: ExceptAbort): null
+  static routeNotFound(optionalData: OptionalData): null
+  static routeNotFound(abort: ExceptAbort, optionalData: OptionalData): null
+  static routeNotFound(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 404,
         code: 'ROUTE_NOT_FOUND',
@@ -151,12 +158,12 @@ export default class Except {
     )
   }
 
-  static entryNotFound(): void
-  static entryNotFound(abort: ExceptAbort): void
-  static entryNotFound(optionalData: OptionalData): void
-  static entryNotFound(abort: ExceptAbort, optionalData: OptionalData): void
-  static entryNotFound(param1?: any, param2?: any): void {
-    Except.custom(
+  static entryNotFound(): null
+  static entryNotFound(abort: ExceptAbort): null
+  static entryNotFound(optionalData: OptionalData): null
+  static entryNotFound(abort: ExceptAbort, optionalData: OptionalData): null
+  static entryNotFound(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 404,
         code: 'ENTRY_NOT_FOUND',
@@ -167,12 +174,12 @@ export default class Except {
     )
   }
 
-  static unauthorized(): void
-  static unauthorized(abort: ExceptAbort): void
-  static unauthorized(optionalData: OptionalData): void
-  static unauthorized(abort: ExceptAbort, optionalData: OptionalData): void
-  static unauthorized(param1?: any, param2?: any): void {
-    Except.custom(
+  static unauthorized(): null
+  static unauthorized(abort: ExceptAbort): null
+  static unauthorized(optionalData: OptionalData): null
+  static unauthorized(abort: ExceptAbort, optionalData: OptionalData): null
+  static unauthorized(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 401,
         code: 'UNAUTHORIZED',
@@ -183,12 +190,12 @@ export default class Except {
     )
   }
 
-  static forbidden(): void
-  static forbidden(abort: ExceptAbort): void
-  static forbidden(optionalData: OptionalData): void
-  static forbidden(abort: ExceptAbort, optionalData: OptionalData): void
-  static forbidden(param1?: any, param2?: any): void {
-    Except.custom(
+  static forbidden(): null
+  static forbidden(abort: ExceptAbort): null
+  static forbidden(optionalData: OptionalData): null
+  static forbidden(abort: ExceptAbort, optionalData: OptionalData): null
+  static forbidden(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 403,
         code: 'FORBIDDEN',
@@ -199,12 +206,12 @@ export default class Except {
     )
   }
 
-  static conflict(): void
-  static conflict(abort: ExceptAbort): void
-  static conflict(optionalData: OptionalData): void
-  static conflict(abort: ExceptAbort, optionalData: OptionalData): void
-  static conflict(param1?: any, param2?: any): void {
-    Except.custom(
+  static conflict(): null
+  static conflict(abort: ExceptAbort): null
+  static conflict(optionalData: OptionalData): null
+  static conflict(abort: ExceptAbort, optionalData: OptionalData): null
+  static conflict(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 409,
         code: 'CONFLICT',
@@ -215,12 +222,12 @@ export default class Except {
     )
   }
 
-  static unprocessableEntity(): void
-  static unprocessableEntity(abort: ExceptAbort): void
-  static unprocessableEntity(optionalData: OptionalData): void
-  static unprocessableEntity(abort: ExceptAbort, optionalData: OptionalData): void
-  static unprocessableEntity(param1?: any, param2?: any): void {
-    Except.custom(
+  static unprocessableEntity(): null
+  static unprocessableEntity(abort: ExceptAbort): null
+  static unprocessableEntity(optionalData: OptionalData): null
+  static unprocessableEntity(abort: ExceptAbort, optionalData: OptionalData): null
+  static unprocessableEntity(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 422,
         code: 'UNPROCESSABLE_ENTITY',
@@ -231,12 +238,12 @@ export default class Except {
     )
   }
 
-  static timeOut(): void
-  static timeOut(abort: ExceptAbort): void
-  static timeOut(optionalData: OptionalData): void
-  static timeOut(abort: ExceptAbort, optionalData: OptionalData): void
-  static timeOut(param1?: any, param2?: any): void {
-    Except.custom(
+  static timeOut(): null
+  static timeOut(abort: ExceptAbort): null
+  static timeOut(optionalData: OptionalData): null
+  static timeOut(abort: ExceptAbort, optionalData: OptionalData): null
+  static timeOut(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 408,
         code: 'TIMEOUT',
@@ -247,12 +254,12 @@ export default class Except {
     )
   }
 
-  static contentTooLarge(): void
-  static contentTooLarge(abort: ExceptAbort): void
-  static contentTooLarge(optionalData: OptionalData): void
-  static contentTooLarge(abort: ExceptAbort, optionalData: OptionalData): void
-  static contentTooLarge(param1?: any, param2?: any): void {
-    Except.custom(
+  static contentTooLarge(): null
+  static contentTooLarge(abort: ExceptAbort): null
+  static contentTooLarge(optionalData: OptionalData): null
+  static contentTooLarge(abort: ExceptAbort, optionalData: OptionalData): null
+  static contentTooLarge(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 413,
         code: 'CONTENT_TOO_LARGE',
@@ -263,12 +270,12 @@ export default class Except {
     )
   }
 
-  static unsupportedMediaType(): void
-  static unsupportedMediaType(abort: ExceptAbort): void
-  static unsupportedMediaType(optionalData: OptionalData): void
-  static unsupportedMediaType(abort: ExceptAbort, optionalData: OptionalData): void
-  static unsupportedMediaType(param1?: any, param2?: any): void {
-    Except.custom(
+  static unsupportedMediaType(): null
+  static unsupportedMediaType(abort: ExceptAbort): null
+  static unsupportedMediaType(optionalData: OptionalData): null
+  static unsupportedMediaType(abort: ExceptAbort, optionalData: OptionalData): null
+  static unsupportedMediaType(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 415,
         code: 'UNSUPPORTED_MEDIA_TYPE',
@@ -279,12 +286,12 @@ export default class Except {
     )
   }
 
-  static expectationFailed(): void
-  static expectationFailed(abort: ExceptAbort): void
-  static expectationFailed(optionalData: OptionalData): void
-  static expectationFailed(abort: ExceptAbort, optionalData: OptionalData): void
-  static expectationFailed(param1?: any, param2?: any): void {
-    Except.custom(
+  static expectationFailed(): null
+  static expectationFailed(abort: ExceptAbort): null
+  static expectationFailed(optionalData: OptionalData): null
+  static expectationFailed(abort: ExceptAbort, optionalData: OptionalData): null
+  static expectationFailed(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 417,
         code: 'EXPECTATION_FAILED',
@@ -295,12 +302,12 @@ export default class Except {
     )
   }
 
-  static internalServerError(): void
-  static internalServerError(abort: ExceptAbort): void
-  static internalServerError(optionalData: OptionalData): void
-  static internalServerError(abort: ExceptAbort, optionalData: OptionalData): void
-  static internalServerError(param1?: any, param2?: any): void {
-    Except.custom(
+  static internalServerError(): null
+  static internalServerError(abort: ExceptAbort): null
+  static internalServerError(optionalData: OptionalData): null
+  static internalServerError(abort: ExceptAbort, optionalData: OptionalData): null
+  static internalServerError(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 500,
         code: 'INTERNAL_SERVER_ERROR',
@@ -311,12 +318,12 @@ export default class Except {
     )
   }
 
-  static badGateway(): void
-  static badGateway(abort: ExceptAbort): void
-  static badGateway(optionalData: OptionalData): void
-  static badGateway(abort: ExceptAbort, optionalData: OptionalData): void
-  static badGateway(param1?: any, param2?: any): void {
-    Except.custom(
+  static badGateway(): null
+  static badGateway(abort: ExceptAbort): null
+  static badGateway(optionalData: OptionalData): null
+  static badGateway(abort: ExceptAbort, optionalData: OptionalData): null
+  static badGateway(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 502,
         code: 'BAD_GATEWAY',
@@ -327,12 +334,12 @@ export default class Except {
     )
   }
 
-  static serviceUnavailable(): void
-  static serviceUnavailable(abort: ExceptAbort): void
-  static serviceUnavailable(optionalData: OptionalData): void
-  static serviceUnavailable(abort: ExceptAbort, optionalData: OptionalData): void
-  static serviceUnavailable(param1?: any, param2?: any): void {
-    Except.custom(
+  static serviceUnavailable(): null
+  static serviceUnavailable(abort: ExceptAbort): null
+  static serviceUnavailable(optionalData: OptionalData): null
+  static serviceUnavailable(abort: ExceptAbort, optionalData: OptionalData): null
+  static serviceUnavailable(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 503,
         code: 'SERVICE_UNAVAILABLE',
@@ -343,12 +350,12 @@ export default class Except {
     )
   }
 
-  static gatewayTimeout(): void
-  static gatewayTimeout(abort: ExceptAbort): void
-  static gatewayTimeout(optionalData: OptionalData): void
-  static gatewayTimeout(abort: ExceptAbort, optionalData: OptionalData): void
-  static gatewayTimeout(param1?: any, param2?: any): void {
-    Except.custom(
+  static gatewayTimeout(): null
+  static gatewayTimeout(abort: ExceptAbort): null
+  static gatewayTimeout(optionalData: OptionalData): null
+  static gatewayTimeout(abort: ExceptAbort, optionalData: OptionalData): null
+  static gatewayTimeout(param1?: any, param2?: any): null {
+    return Except.custom(
       {
         status: 504,
         code: 'GATEWAY_TIMEOUT',

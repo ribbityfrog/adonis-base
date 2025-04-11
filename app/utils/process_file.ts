@@ -21,9 +21,15 @@ export default class ProcessFile {
         buffer.totalSize += chunk.length
         buffer.parts.push(Buffer.from(chunk))
       })
-      part.on('end', () => {})
+      // part.on('end', () => {})
 
-      part.on('error', () => {})
+      part.on('error', () => {
+        buffer.parts.length = 0
+        buffer.parts = []
+        buffer.totalSize = 0
+        buffer.partsNumber = 0
+        part.destroy()
+      })
 
       part.resume()
       return { buffer }
@@ -37,7 +43,7 @@ export default class ProcessFile {
   }
 
   private static processMultipartFile(file: MultipartFile): ProcessedFile {
-    return {
+    const processedFile = {
       basics: {
         name: path.parse(file.clientName).name,
         ext: file.extname ?? '',
@@ -50,6 +56,13 @@ export default class ProcessFile {
         file.meta.buffer.parts.length > 0 ? file.meta.buffer.parts : [Buffer.from('')]
       ),
     }
+
+    file.meta.buffer.parts.length = 0
+    file.meta.buffer.parts = []
+    file.meta.buffer.totalSize = 0
+    file.meta.buffer.partsNumber = 0
+
+    return processedFile
   }
 
   private static processRecordOfMultipartFiles(

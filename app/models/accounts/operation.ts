@@ -3,7 +3,7 @@ import { compose } from '@adonisjs/core/helpers'
 import withDefaultFields from '#models/mixins/default_fields'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
-import type { OperationType } from '#models/accounts/types'
+import type { OperationType } from '#schemas/accounts/types'
 
 import User from '#models/accounts/user'
 import type { UUID } from 'node:crypto'
@@ -20,8 +20,6 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
 
   @column()
   declare userId: UUID
-  @belongsTo(() => User)
-  declare user: BelongsTo<typeof User>
 
   @column()
   declare operationType: OperationType
@@ -32,8 +30,16 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
   @column()
   declare verificationKey: string // argon2 string
 
-  @column()
+  @column.dateTime()
+  declare expireAt: DateTime
+
+  @column({
+    prepare: (value: any) => value ?? {},
+  })
   declare data: any
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
 
   static async getFromKeys(searchKey: string, operationType: OperationType) {
     return await Operation.query()
@@ -43,30 +49,26 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
       .first()
   }
 
-  static async useOrFail(
-    keys: OperationKeys,
-    validityInMinutes: number,
-    operationType: OperationType
-  ): Promise<Operation> {
+  static async useOrFail(keys: OperationKeys, operationType: OperationType): Promise<Operation> {
     const operation = await Operation.getFromKeys(keys.searchKey, operationType)
 
-    if (operation === null) Except.forbidden()
+    if (operation === null) throw Except.forbidden()
 
     const checkHash = await hash.verify(operation!.verificationKey, keys.verificationKey)
     if (checkHash === false) {
       await operation!.delete()
-      Except.forbidden()
+      throw Except.forbidden()
     }
 
-    if (operation!.createdAt.plus({ minutes: validityInMinutes }) <= DateTime.now()) {
+    if (operation!.expireAt <= DateTime.now()) {
       await operation!.delete()
-      Except.forbidden()
+      throw Except.forbidden()
     }
 
-    return operation as Operation
+    return operation
   }
 
-  static async createSearchKey(): Promise<string | undefined> {
+  static async createSearchKey(): Promise<string> {
     let searchKey
     for (let tryKey = 0; tryKey < 5; tryKey++) {
       searchKey = cuid()
@@ -75,6 +77,10 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
 
       searchKey = undefined
     }
+
+    if (searchKey === undefined)
+      throw Except.internalServerError({ debug: 'Failed to create operation' })
+
     return searchKey
   }
 
@@ -82,13 +88,12 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
     user: User,
     operationType: OperationType,
     data: any = null,
+    expireInMinutes: number = 15,
     clearPreviousEntries: boolean = true
-  ): Promise<OperationKeys | null> {
+  ): Promise<OperationKeys> {
     if (clearPreviousEntries) await user.clearOperations(operationType)
 
     const searchKey = await Operation.createSearchKey()
-    if (searchKey === undefined) return null
-
     const verificationKey = string.random(24)
 
     await user.related('operations').create({
@@ -96,6 +101,7 @@ export default class Operation extends compose(BaseModel, withDefaultFields) {
       searchKey,
       verificationKey: await hash.make(verificationKey),
       data,
+      expireAt: DateTime.now().plus({ minutes: expireInMinutes }),
     })
 
     return { searchKey, verificationKey }

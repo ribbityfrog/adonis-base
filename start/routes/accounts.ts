@@ -1,11 +1,14 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 
-import userSchema from '#schemas/accounts/user'
-import operationKeysSchema from '#schemas/accounts/operation'
+import { OperationType } from '#schemas/accounts/types'
 
-const accountsUsersController = () => import('#controllers/accounts/users_controller')
+import operationKeysSchema from '#schemas/accounts/operation'
+import { userCredentialsSchema, userEmailSchema, userPasswordSchema } from '#schemas/accounts/user'
+
+const accountsRequestsController = () => import('#controllers/accounts/requests_controller')
 const accountsConnectionsController = () => import('#controllers/accounts/connections_controller')
+const accountsProfilesController = () => import('#controllers/accounts/profiles_controller')
 const accountsOperationsController = () => import('#controllers/accounts/operations_controller')
 
 export default function () {
@@ -13,46 +16,54 @@ export default function () {
     .group(() => {
       router
         .group(() => {
-          router.post('create', [accountsUsersController, 'create'])
-          router.post('login', [accountsOperationsController, 'login'])
-
-          router
-            .post('newEmail', [accountsOperationsController, 'newEmail'])
-            .use(middleware.auth({ guards: ['api'] }))
-        })
-        .use(middleware.validateBody(userSchema.pick({ email: true })))
-        .prefix('request')
-
-      router
-        .group(() => {
-          router.post('connect', [accountsConnectionsController, 'connect'])
-          router.post('newEmail', [accountsUsersController, 'newEmail'])
-        })
-        .use(middleware.validateBody(operationKeysSchema))
-        .prefix('operation')
-
-      router
-        .group(() => {
-          router.delete('deleteSelf', [accountsUsersController, 'deleteSelf'])
+          router.delete('logout', [accountsConnectionsController, 'logout'])
         })
         .use(middleware.auth({ guards: ['api'] }))
+        .prefix('connection')
+
+      router
+        .group(() => {
+          router.get('get', [accountsProfilesController, 'get'])
+
+          // router.post('update', [accountsProfilesController, 'update'])
+          router
+            .patch('update-password', [accountsProfilesController, 'updatePassword'])
+            .use(middleware.validateBody(userPasswordSchema))
+          router
+            .post('update-email', [accountsProfilesController, 'updateEmail'])
+            .use(middleware.validateBody(userEmailSchema))
+
+          router.delete('delete', [accountsProfilesController, 'delete'])
+        })
+        .use(middleware.auth({ guards: ['api'] }))
+        .prefix('profile')
+
+      router
+        .group(() => {
+          router.post('connect' satisfies OperationType, [accountsOperationsController, 'connect'])
+          router.post('update-email' satisfies OperationType, [
+            accountsOperationsController,
+            'updateEmail',
+          ])
+        })
+        .prefix('operation')
+        .use(middleware.validateBody(operationKeysSchema))
+
+      router
+        .group(() => {
+          router
+            .post('create', [accountsRequestsController, 'create'])
+            .use(middleware.validateBody(userCredentialsSchema))
+
+          router
+            .post('login', [accountsRequestsController, 'login'])
+            .use(middleware.validateBody(userCredentialsSchema))
+
+          router
+            .post('login-passwordless', [accountsRequestsController, 'loginPasswordless'])
+            .use(middleware.validateBody(userEmailSchema))
+        })
+        .prefix('request')
     })
     .prefix('/accounts')
-
-  router
-    .group(() => {
-      router.get('listSelf', [accountsConnectionsController, 'listSelf'])
-      router.get('list', [accountsConnectionsController, 'list']).use(middleware.admin())
-      router.delete('logout', [accountsConnectionsController, 'logout'])
-    })
-    .prefix('/connections')
-    .use(middleware.auth({ guards: ['api'] }))
-
-  router
-    .group(() => {
-      router.get('me', [accountsUsersController, 'me'])
-      router.get('list', [accountsUsersController, 'list']).use(middleware.admin())
-    })
-    .prefix('/users')
-    .use(middleware.auth({ guards: ['api'] }))
 }

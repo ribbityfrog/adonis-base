@@ -1,7 +1,7 @@
 import type { ApplicationService } from '@adonisjs/core/types'
-import Brevo from '#services/brevo/index'
-import Bree from '#services/bree/index'
-import Flydrive from '#services/flydrive/index'
+import Brevo from '#services/thirds/brevo/index'
+import Bree from '#services/thirds/bree/index'
+import Flydrive from '#services/thirds/flydrive/index'
 
 export default class ThirdProvider {
   constructor(protected app: ApplicationService) {}
