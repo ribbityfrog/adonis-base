@@ -2,6 +2,7 @@ import type { ApplicationService } from '@adonisjs/core/types'
 import Brevo from '#services/thirds/brevo/index'
 import Bree from '#services/thirds/bree/index'
 import Flydrive from '#services/thirds/flydrive/index'
+import discordMessage from '#utils/discord_message'
 
 export default class ThirdProvider {
   constructor(protected app: ApplicationService) {}
@@ -30,12 +31,6 @@ export default class ThirdProvider {
       .then()
       .catch(() => {})
 
-    const scheduler = await this.app.container.make(Bree)
-    await scheduler
-      .init()
-      .then()
-      .catch(() => {})
-
     const storage = await this.app.container.make(Flydrive)
     await storage.checkInit()
   }
@@ -43,7 +38,15 @@ export default class ThirdProvider {
   /**
    * The process has been started
    */
-  async ready() {}
+  async ready() {
+    const scheduler = await this.app.container.make(Bree)
+    await scheduler
+      .start()
+      .then()
+      .catch(() => {})
+
+    discordMessage.custom('(START-provider) Third services ready', false)
+  }
 
   /**
    * Preparing to shutdown the app

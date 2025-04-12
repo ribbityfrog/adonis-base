@@ -26,10 +26,12 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
-  | Variables for configuring magic links
+  | General configuration
   |----------------------------------------------------------
   */
-  FRONT_ORIGIN: Env.schema.string(),
+  FRONT_ORIGIN: Env.schema.string.optional(),
+  SCHEDULER: Env.schema.boolean.optional(),
+  DISCORD_WEBHOOK: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
