@@ -4,14 +4,8 @@ import User from '#models/accounts/user'
 
 export default class UsersController {
   async list() {
-    return await User.query().select(
-      'id',
-      'email',
-      'isVerified',
-      'isBanned',
-      'isAdmin',
-      'lastConnection',
-      'createdAt'
-    )
+    return await User.query()
+      .select('id', 'email', 'isVerified', 'isBanned', 'isAdmin', 'lastConnection', 'createdAt')
+      .orderBy('email', 'asc')
   }
 }
