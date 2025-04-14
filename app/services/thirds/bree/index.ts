@@ -7,6 +7,19 @@ import discordMessage from '#utils/discord_message'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'jobs')
+const extension = env.get('NODE_ENV', 'production') === 'production' ? 'js' : 'ts'
+const resolvePath = (job: string) => `${root}/${job}.${extension}`
+
+function setWorker(data: Record<string, string | number | boolean>) {
+  return {
+    workerData: {
+      appRootString: app.appRoot.href,
+      ...data,
+    },
+  }
+}
+
 export default class Bree {
   private _instance: BreeInstance
   private _isReady: boolean = false
@@ -22,21 +35,24 @@ export default class Bree {
 
   constructor() {
     this._instance = new BreeInstance({
-      root: path.join(path.dirname(fileURLToPath(import.meta.url)), 'jobs'),
+      root,
 
-      defaultExtension: env.get('NODE_ENV', 'production') === 'production' ? 'js' : 'ts',
+      defaultExtension: extension,
       logger: env.get('NODE_ENV', 'production') === 'production' ? false : console,
 
-      worker: {
-        workerData: {
-          appRootString: app.appRoot.href,
-        },
-      },
+      // worker: {
+      //   workerData: {
+      //     appRootString: app.appRoot.href,
+      //   },
+      // },
 
       jobs: [
         {
-          name: 'job',
+          name: 'expiration',
+          path: resolvePath('app'),
+          worker: setWorker({ job: 'expiration' }),
           timeout: '5 seconds',
+          interval: '1 day',
         },
         // {
         //   name: 'steam_list',
@@ -72,7 +88,7 @@ export default class Bree {
 
     if (schedule)
       await this._instance
-        .start('job')
+        .start()
         .then(() => {
           this._initEvents()
           logger.info('[service] Bree - Started properly')

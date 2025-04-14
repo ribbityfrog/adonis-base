@@ -5,9 +5,9 @@ import discordMessage from '#utils/discord_message'
 
 import { isMainThread, workerData } from 'node:worker_threads'
 
-export default async (
+export default async function igniteWorkerApp(
   environment: AppEnvironments = 'repl'
-): Promise<ApplicationService | null> => {
+): Promise<ApplicationService | null> {
   const rootUrl = workerData.appRootString
 
   if (isMainThread || !rootUrl) {
