@@ -7,12 +7,16 @@ import Operation from '#models/accounts/operation'
 import Except from '#utils/except'
 import magicLink from '#utils/magic_link'
 
+import mailChecker from 'mailchecker'
+
 export default class RequestsController {
   async create({ request }: HttpContext) {
     const body = request.body()
 
     const email = body.email.trim().toLowerCase()
     const password = body.password.trim()
+
+    if (!mailChecker.isValid(email)) return
 
     const checkUser = await User.findBy('email', email)
     const user = checkUser ?? (await User.create({ email, password }))
