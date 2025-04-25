@@ -110,14 +110,6 @@ export default class Bree {
 
       this._instance.on('worker deleted', async (name) => {
         logger.info(`[Bree] Worker "${name}" stopped`)
-
-        // const work = await this._launchLogic(name)
-
-        // if (work === null) {
-        //   logger.error('[Bree] Steam workers ended')
-        //   discordMessage.custom('[Bree] Steam workers ended')
-        // } else if (work.mode === 'start') this._instance.start(work.job)
-        // else if (work.mode === 'run') this._instance.run(work.job)
       })
     }
 
